@@ -4,6 +4,17 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>ErikTheCoder.Logging</RootNamespace>
     <AssemblyName>ErikTheCoder.Logging</AssemblyName>
+    <Authors>Erik Madsen</Authors>
+    <Company></Company>
+    <Product />
+    <Description>A zero latency, thread-safe logger that writes to files and / or a database.</Description>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ekmadsen/Logging</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ekmadsen/Logging</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>logging</PackageTags>
+    <Copyright>2019</Copyright>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
