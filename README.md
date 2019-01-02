@@ -1,2 +1,2 @@
 # Logging
-A low-latency, thread-safe logger that writes to a database or a file.
+A zero latency, thread-safe logger that writes to files and / or a database.

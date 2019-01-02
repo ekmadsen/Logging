@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>ErikTheCoder.Logging</RootNamespace>
+    <AssemblyName>ErikTheCoder.Logging</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
+  </ItemGroup>
+
+</Project>

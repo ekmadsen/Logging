@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs
+/Logging/bin
+/Logging/obj
+/Logging/.vs/Logging
+/Tests/bin
+/Tests/obj
