@@ -1,11 +1,17 @@
-﻿USE [AppLogs]
+﻿/****** Object:  Schema [Logging]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE SCHEMA [Logging]
 GO
-/****** Object:  Table [dbo].[Apps]    Script Date: 1/2/2019 9:43:42 PM ******/
+/****** Object:  View [Logging].[MetricLogsLastDay]    Script Date: 1/4/2019 11:55:47 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Apps](
+/****** Object:  Table [Logging].[Apps]    Script Date: 1/4/2019 11:55:47 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Logging].[Apps](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_Apps] PRIMARY KEY CLUSTERED 
@@ -14,12 +20,12 @@ CREATE TABLE [dbo].[Apps](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Hosts]    Script Date: 1/2/2019 9:43:43 PM ******/
+/****** Object:  Table [Logging].[Hosts]    Script Date: 1/4/2019 11:55:47 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Hosts](
+CREATE TABLE [Logging].[Hosts](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_Hosts] PRIMARY KEY CLUSTERED 
@@ -28,27 +34,12 @@ CREATE TABLE [dbo].[Hosts](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Processes]    Script Date: 1/2/2019 9:43:43 PM ******/
+/****** Object:  Table [Logging].[MetricLogs]    Script Date: 1/4/2019 11:55:47 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Processes](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[AppId] [int] NOT NULL,
-	[Name] [nvarchar](50) NOT NULL,
- CONSTRAINT [PK_Processes] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  Table [dbo].[MetricLogs]    Script Date: 1/2/2019 9:43:43 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[MetricLogs](
+CREATE TABLE [Logging].[MetricLogs](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[HostId] [int] NOT NULL,
 	[ProcessId] [int] NOT NULL,
@@ -65,26 +56,12 @@ CREATE TABLE [dbo].[MetricLogs](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[MetricLogsLastDay]    Script Date: 1/2/2019 9:43:43 PM ******/
+/****** Object:  Table [Logging].[PerformanceLogs]    Script Date: 1/4/2019 11:55:47 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[MetricLogsLastDay]
-AS
-SELECT m.Id, m.Timestamp, m.CorrelationId, h.Name AS HostName, a.Name AS AppName, p.Name AS ProcessName, m.ItemId, m.MetricName, m.DateTimeValue, m.IntValue, m.TextValue
-FROM   dbo.MetricLogs AS m INNER JOIN
-             dbo.Hosts AS h ON m.HostId = h.Id INNER JOIN
-             dbo.Processes AS p ON m.ProcessId = p.Id INNER JOIN
-             dbo.Apps AS a ON p.AppId = a.Id
-WHERE (m.Timestamp > DATEADD(HOUR, - 24, GETDATE()))
-GO
-/****** Object:  Table [dbo].[PerformanceLogs]    Script Date: 1/2/2019 9:43:43 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[PerformanceLogs](
+CREATE TABLE [Logging].[PerformanceLogs](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[HostId] [int] NOT NULL,
 	[ProcessId] [int] NOT NULL,
@@ -98,53 +75,41 @@ CREATE TABLE [dbo].[PerformanceLogs](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[OperationsAvgDuration]    Script Date: 1/2/2019 9:43:43 PM ******/
+/****** Object:  Table [Logging].[Processes]    Script Date: 1/4/2019 11:55:47 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[OperationsAvgDuration]
-AS
-SELECT a.Name AS AppName, pr.Name AS ProcessName, pl.OperationName, COUNT(*) AS Count, CAST(DATEADD(ms, AVG(CAST(DATEDIFF(ms, '00:00:00', CAST(pl.OperationDuration AS time)) AS BIGINT)), '00:00:00') AS Time) AS OperationAvgDuration
-FROM   dbo.PerformanceLogs AS pl INNER JOIN
-             dbo.Processes AS pr ON pl.ProcessId = pr.Id INNER JOIN
-             dbo.Apps AS a ON pr.AppId = a.Id
-GROUP BY a.Name, pr.Name, pl.OperationName
+CREATE TABLE [Logging].[Processes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[AppId] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Processes] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[OperationsAvgDurationLastDay]    Script Date: 1/2/2019 9:43:43 PM ******/
+/****** Object:  Table [Logging].[TraceLogLevels]    Script Date: 1/4/2019 11:55:47 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[OperationsAvgDurationLastDay]
-AS
-SELECT a.Name AS AppName, pr.Name AS ProcessName, pl.OperationName, COUNT(*) AS Count, CAST(DATEADD(ms, AVG(CAST(DATEDIFF(ms, '00:00:00', CAST(pl.OperationDuration AS time)) AS BIGINT)), '00:00:00') AS Time) AS OperationAvgDuration
-FROM   dbo.PerformanceLogs AS pl INNER JOIN
-             dbo.Processes AS pr ON pl.ProcessId = pr.Id INNER JOIN
-             dbo.Apps AS a ON pr.AppId = a.Id
-WHERE (pl.Timestamp > DATEADD(HOUR, - 24, GETDATE()))
-GROUP BY a.Name, pr.Name, pl.OperationName
+CREATE TABLE [Logging].[TraceLogLevels](
+	[Id] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_TraceLogLevels] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-/****** Object:  View [dbo].[PerformanceLogsLastDay]    Script Date: 1/2/2019 9:43:43 PM ******/
+/****** Object:  Table [Logging].[TraceLogs]    Script Date: 1/4/2019 11:55:47 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE VIEW [dbo].[PerformanceLogsLastDay]
-AS
-SELECT perf.Id, perf.Timestamp, perf.CorrelationId, h.Name AS HostName, a.Name AS AppName, p.Name AS ProcessName, perf.OperationName, perf.OperationDuration
-FROM   dbo.PerformanceLogs AS perf INNER JOIN
-             dbo.Hosts AS h ON perf.HostId = h.Id INNER JOIN
-             dbo.Processes AS p ON perf.ProcessId = p.Id INNER JOIN
-             dbo.Apps AS a ON p.AppId = a.Id
-WHERE (perf.Timestamp > DATEADD(HOUR, - 24, GETDATE()))
-GO
-/****** Object:  Table [dbo].[TraceLogs]    Script Date: 1/2/2019 9:43:43 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TraceLogs](
+CREATE TABLE [Logging].[TraceLogs](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[HostId] [int] NOT NULL,
 	[ProcessId] [int] NOT NULL,
@@ -158,64 +123,34 @@ CREATE TABLE [dbo].[TraceLogs](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TraceLogLevels]    Script Date: 1/2/2019 9:43:43 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[TraceLogLevels](
-	[Id] [int] NOT NULL,
-	[Name] [nchar](20) NOT NULL,
- CONSTRAINT [PK_TraceLogLevels] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-/****** Object:  View [dbo].[TraceLogsLastDay]    Script Date: 1/2/2019 9:43:43 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE VIEW [dbo].[TraceLogsLastDay]
-AS
-SELECT        TOP (100) PERCENT t.Id, t.Timestamp, t.CorrelationId, h.Name AS HostName, a.Name AS AppName, p.Name AS ProcessName, l.Id AS LogLevelId, l.Name AS LogLevel, t.Message
-FROM            dbo.TraceLogs AS t INNER JOIN
-                         dbo.Hosts AS h ON t.HostId = h.Id INNER JOIN
-                         dbo.Processes AS p ON t.ProcessId = p.Id INNER JOIN
-                         dbo.Apps AS a ON p.AppId = a.Id INNER JOIN
-                         dbo.TraceLogLevels AS l ON t.LevelId = l.Id
-WHERE        (t.Timestamp > DATEADD(HOUR, - 24, GETDATE()))
-
-GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [UX_Apps_Name]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [UX_Apps_Name] ON [dbo].[Apps]
+/****** Object:  Index [UX_Apps_Name]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Apps_Name] ON [Logging].[Apps]
 (
 	[Name] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [UX_Hosts_Name]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [UX_Hosts_Name] ON [dbo].[Hosts]
+/****** Object:  Index [UX_Hosts_Name]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Hosts_Name] ON [Logging].[Hosts]
 (
 	[Name] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_MetricLogs_CorrelationId]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_MetricLogs_CorrelationId] ON [dbo].[MetricLogs]
+/****** Object:  Index [IX_MetricLogs_CorrelationId]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_MetricLogs_CorrelationId] ON [Logging].[MetricLogs]
 (
 	[CorrelationId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_MetricLogs_ProcessId_ItemId]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_MetricLogs_ProcessId_ItemId] ON [dbo].[MetricLogs]
+/****** Object:  Index [IX_MetricLogs_ProcessId_ItemId]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_MetricLogs_ProcessId_ItemId] ON [Logging].[MetricLogs]
 (
 	[ProcessId] ASC,
 	[ItemId] ASC
@@ -223,66 +158,66 @@ CREATE NONCLUSTERED INDEX [IX_MetricLogs_ProcessId_ItemId] ON [dbo].[MetricLogs]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_MetricLogs_ProcessId_MetricName]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_MetricLogs_ProcessId_MetricName] ON [dbo].[MetricLogs]
+/****** Object:  Index [IX_MetricLogs_ProcessId_MetricName]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_MetricLogs_ProcessId_MetricName] ON [Logging].[MetricLogs]
 (
 	[ProcessId] ASC,
 	[MetricName] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_MetricLogs_ProcessId_Timestamp]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_MetricLogs_ProcessId_Timestamp] ON [dbo].[MetricLogs]
+/****** Object:  Index [IX_MetricLogs_ProcessId_Timestamp]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_MetricLogs_ProcessId_Timestamp] ON [Logging].[MetricLogs]
 (
 	[ProcessId] ASC,
 	[Timestamp] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_MetricLogs_Timestamp]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_MetricLogs_Timestamp] ON [dbo].[MetricLogs]
+/****** Object:  Index [IX_MetricLogs_Timestamp]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_MetricLogs_Timestamp] ON [Logging].[MetricLogs]
 (
 	[Timestamp] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_PerformanceLogs_CorrelationId]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_PerformanceLogs_CorrelationId] ON [dbo].[PerformanceLogs]
+/****** Object:  Index [IX_PerformanceLogs_CorrelationId]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_PerformanceLogs_CorrelationId] ON [Logging].[PerformanceLogs]
 (
 	[CorrelationId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_PerformanceLogs_ProcessId_OperationName]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_PerformanceLogs_ProcessId_OperationName] ON [dbo].[PerformanceLogs]
+/****** Object:  Index [IX_PerformanceLogs_ProcessId_OperationName]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_PerformanceLogs_ProcessId_OperationName] ON [Logging].[PerformanceLogs]
 (
 	[ProcessId] ASC,
 	[OperationName] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_PerformanceLogs_ProcessId_Timestamp]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_PerformanceLogs_ProcessId_Timestamp] ON [dbo].[PerformanceLogs]
+/****** Object:  Index [IX_PerformanceLogs_ProcessId_Timestamp]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_PerformanceLogs_ProcessId_Timestamp] ON [Logging].[PerformanceLogs]
 (
 	[ProcessId] ASC,
 	[Timestamp] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_PerformanceLogs_Timestamp]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_PerformanceLogs_Timestamp] ON [dbo].[PerformanceLogs]
+/****** Object:  Index [IX_PerformanceLogs_Timestamp]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_PerformanceLogs_Timestamp] ON [Logging].[PerformanceLogs]
 (
 	[Timestamp] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Processes_AppId]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_Processes_AppId] ON [dbo].[Processes]
+/****** Object:  Index [IX_Processes_AppId]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_Processes_AppId] ON [Logging].[Processes]
 (
 	[AppId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [UX_Processes_AppId_Name]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [UX_Processes_AppId_Name] ON [dbo].[Processes]
+/****** Object:  Index [UX_Processes_AppId_Name]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [UX_Processes_AppId_Name] ON [Logging].[Processes]
 (
 	[AppId] ASC,
 	[Name] ASC
@@ -290,80 +225,146 @@ CREATE UNIQUE NONCLUSTERED INDEX [UX_Processes_AppId_Name] ON [dbo].[Processes]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [UX_TraceLogLevels_Name]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE UNIQUE NONCLUSTERED INDEX [UX_TraceLogLevels_Name] ON [dbo].[TraceLogLevels]
+/****** Object:  Index [UX_TraceLogLevels_Name]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE UNIQUE NONCLUSTERED INDEX [UX_TraceLogLevels_Name] ON [Logging].[TraceLogLevels]
 (
 	[Name] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Object:  Index [IX_TraceLogs_CorrelationId]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_TraceLogs_CorrelationId] ON [dbo].[TraceLogs]
+/****** Object:  Index [IX_TraceLogs_CorrelationId]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_TraceLogs_CorrelationId] ON [Logging].[TraceLogs]
 (
 	[CorrelationId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_TraceLogs_ProcessId_LevelId_Timestamp]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_TraceLogs_ProcessId_LevelId_Timestamp] ON [dbo].[TraceLogs]
+/****** Object:  Index [IX_TraceLogs_ProcessId_LevelId_Timestamp]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_TraceLogs_ProcessId_LevelId_Timestamp] ON [Logging].[TraceLogs]
 (
 	[ProcessId] ASC,
 	[LevelId] ASC,
 	[Timestamp] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_TraceLogs_ProcessId_Timestamp]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_TraceLogs_ProcessId_Timestamp] ON [dbo].[TraceLogs]
+/****** Object:  Index [IX_TraceLogs_ProcessId_Timestamp]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_TraceLogs_ProcessId_Timestamp] ON [Logging].[TraceLogs]
 (
 	[ProcessId] ASC,
 	[Timestamp] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_TraceLogs_Timestamp]    Script Date: 1/2/2019 9:43:43 PM ******/
-CREATE NONCLUSTERED INDEX [IX_TraceLogs_Timestamp] ON [dbo].[TraceLogs]
+/****** Object:  Index [IX_TraceLogs_Timestamp]    Script Date: 1/4/2019 11:55:47 AM ******/
+CREATE NONCLUSTERED INDEX [IX_TraceLogs_Timestamp] ON [Logging].[TraceLogs]
 (
 	[Timestamp] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[MetricLogs]  WITH CHECK ADD  CONSTRAINT [FK_MetricLogs_Hosts] FOREIGN KEY([HostId])
-REFERENCES [dbo].[Hosts] ([Id])
+ALTER TABLE [Logging].[MetricLogs]  WITH CHECK ADD  CONSTRAINT [FK_MetricLogs_Hosts] FOREIGN KEY([HostId])
+REFERENCES [Logging].[Hosts] ([Id])
 GO
-ALTER TABLE [dbo].[MetricLogs] CHECK CONSTRAINT [FK_MetricLogs_Hosts]
+ALTER TABLE [Logging].[MetricLogs] CHECK CONSTRAINT [FK_MetricLogs_Hosts]
 GO
-ALTER TABLE [dbo].[MetricLogs]  WITH CHECK ADD  CONSTRAINT [FK_MetricLogs_Processes] FOREIGN KEY([ProcessId])
-REFERENCES [dbo].[Processes] ([Id])
+ALTER TABLE [Logging].[MetricLogs]  WITH CHECK ADD  CONSTRAINT [FK_MetricLogs_Processes] FOREIGN KEY([ProcessId])
+REFERENCES [Logging].[Processes] ([Id])
 GO
-ALTER TABLE [dbo].[MetricLogs] CHECK CONSTRAINT [FK_MetricLogs_Processes]
+ALTER TABLE [Logging].[MetricLogs] CHECK CONSTRAINT [FK_MetricLogs_Processes]
 GO
-ALTER TABLE [dbo].[PerformanceLogs]  WITH CHECK ADD  CONSTRAINT [FK_PerformanceLogs_Hosts] FOREIGN KEY([HostId])
-REFERENCES [dbo].[Hosts] ([Id])
+ALTER TABLE [Logging].[PerformanceLogs]  WITH CHECK ADD  CONSTRAINT [FK_PerformanceLogs_Hosts] FOREIGN KEY([HostId])
+REFERENCES [Logging].[Hosts] ([Id])
 GO
-ALTER TABLE [dbo].[PerformanceLogs] CHECK CONSTRAINT [FK_PerformanceLogs_Hosts]
+ALTER TABLE [Logging].[PerformanceLogs] CHECK CONSTRAINT [FK_PerformanceLogs_Hosts]
 GO
-ALTER TABLE [dbo].[PerformanceLogs]  WITH CHECK ADD  CONSTRAINT [FK_PerformanceLogs_Processes] FOREIGN KEY([ProcessId])
-REFERENCES [dbo].[Processes] ([Id])
+ALTER TABLE [Logging].[PerformanceLogs]  WITH CHECK ADD  CONSTRAINT [FK_PerformanceLogs_Processes] FOREIGN KEY([ProcessId])
+REFERENCES [Logging].[Processes] ([Id])
 GO
-ALTER TABLE [dbo].[PerformanceLogs] CHECK CONSTRAINT [FK_PerformanceLogs_Processes]
+ALTER TABLE [Logging].[PerformanceLogs] CHECK CONSTRAINT [FK_PerformanceLogs_Processes]
 GO
-ALTER TABLE [dbo].[Processes]  WITH CHECK ADD  CONSTRAINT [FK_Processes_Apps] FOREIGN KEY([AppId])
-REFERENCES [dbo].[Apps] ([Id])
+ALTER TABLE [Logging].[Processes]  WITH CHECK ADD  CONSTRAINT [FK_Processes_Apps] FOREIGN KEY([AppId])
+REFERENCES [Logging].[Apps] ([Id])
 GO
-ALTER TABLE [dbo].[Processes] CHECK CONSTRAINT [FK_Processes_Apps]
+ALTER TABLE [Logging].[Processes] CHECK CONSTRAINT [FK_Processes_Apps]
 GO
-ALTER TABLE [dbo].[TraceLogs]  WITH CHECK ADD  CONSTRAINT [FK_TraceLogs_Hosts] FOREIGN KEY([HostId])
-REFERENCES [dbo].[Hosts] ([Id])
+ALTER TABLE [Logging].[TraceLogs]  WITH CHECK ADD  CONSTRAINT [FK_TraceLogs_Hosts] FOREIGN KEY([HostId])
+REFERENCES [Logging].[Hosts] ([Id])
 GO
-ALTER TABLE [dbo].[TraceLogs] CHECK CONSTRAINT [FK_TraceLogs_Hosts]
+ALTER TABLE [Logging].[TraceLogs] CHECK CONSTRAINT [FK_TraceLogs_Hosts]
 GO
-ALTER TABLE [dbo].[TraceLogs]  WITH CHECK ADD  CONSTRAINT [FK_TraceLogs_Processes] FOREIGN KEY([ProcessId])
-REFERENCES [dbo].[Processes] ([Id])
+ALTER TABLE [Logging].[TraceLogs]  WITH CHECK ADD  CONSTRAINT [FK_TraceLogs_Processes] FOREIGN KEY([ProcessId])
+REFERENCES [Logging].[Processes] ([Id])
 GO
-ALTER TABLE [dbo].[TraceLogs] CHECK CONSTRAINT [FK_TraceLogs_Processes]
+ALTER TABLE [Logging].[TraceLogs] CHECK CONSTRAINT [FK_TraceLogs_Processes]
 GO
-ALTER TABLE [dbo].[TraceLogs]  WITH CHECK ADD  CONSTRAINT [FK_TraceLogs_TraceLogLevels] FOREIGN KEY([LevelId])
-REFERENCES [dbo].[TraceLogLevels] ([Id])
+ALTER TABLE [Logging].[TraceLogs]  WITH CHECK ADD  CONSTRAINT [FK_TraceLogs_TraceLogLevels] FOREIGN KEY([LevelId])
+REFERENCES [Logging].[TraceLogLevels] ([Id])
 GO
-ALTER TABLE [dbo].[TraceLogs] CHECK CONSTRAINT [FK_TraceLogs_TraceLogLevels]
+ALTER TABLE [Logging].[TraceLogs] CHECK CONSTRAINT [FK_TraceLogs_TraceLogLevels]
+GO
+CREATE VIEW [Logging].[MetricLogsLastDay]
+AS
+SELECT m.Id, m.Timestamp, m.CorrelationId, h.Name AS HostName, a.Name AS AppName, p.Name AS ProcessName, m.ItemId, m.MetricName, m.DateTimeValue, m.IntValue, m.TextValue
+FROM   Logging.MetricLogs AS m INNER JOIN
+             Logging.Hosts AS h ON m.HostId = h.Id INNER JOIN
+             Logging.Processes AS p ON m.ProcessId = p.Id INNER JOIN
+             Logging.Apps AS a ON p.AppId = a.Id
+WHERE (m.Timestamp > DATEADD(HOUR, - 24, GETDATE()))
+GO
+/****** Object:  View [Logging].[OperationsAvgDuration]    Script Date: 1/4/2019 11:55:47 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [Logging].[OperationsAvgDuration]
+AS
+SELECT a.Name AS AppName, pr.Name AS ProcessName, pl.OperationName, COUNT(*) AS Count, CAST(DATEADD(ms, AVG(CAST(DATEDIFF(ms, '00:00:00', CAST(pl.OperationDuration AS time)) AS BIGINT)), '00:00:00') AS Time) AS OperationAvgDuration
+FROM   Logging.PerformanceLogs AS pl INNER JOIN
+             Logging.Processes AS pr ON pl.ProcessId = pr.Id INNER JOIN
+             Logging.Apps AS a ON pr.AppId = a.Id
+GROUP BY a.Name, pr.Name, pl.OperationName
+GO
+/****** Object:  View [Logging].[OperationsAvgDurationLastDay]    Script Date: 1/4/2019 11:55:47 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [Logging].[OperationsAvgDurationLastDay]
+AS
+SELECT a.Name AS AppName, pr.Name AS ProcessName, pl.OperationName, COUNT(*) AS Count, CAST(DATEADD(ms, AVG(CAST(DATEDIFF(ms, '00:00:00', CAST(pl.OperationDuration AS time)) AS BIGINT)), '00:00:00') AS Time) AS OperationAvgDuration
+FROM   Logging.PerformanceLogs AS pl INNER JOIN
+             Logging.Processes AS pr ON pl.ProcessId = pr.Id INNER JOIN
+             Logging.Apps AS a ON pr.AppId = a.Id
+WHERE (pl.Timestamp > DATEADD(HOUR, - 24, GETDATE()))
+GROUP BY a.Name, pr.Name, pl.OperationName
+GO
+/****** Object:  View [Logging].[PerformanceLogsLastDay]    Script Date: 1/4/2019 11:55:47 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [Logging].[PerformanceLogsLastDay]
+AS
+SELECT perf.Id, perf.Timestamp, perf.CorrelationId, h.Name AS HostName, a.Name AS AppName, p.Name AS ProcessName, perf.OperationName, perf.OperationDuration
+FROM   Logging.PerformanceLogs AS perf INNER JOIN
+             Logging.Hosts AS h ON perf.HostId = h.Id INNER JOIN
+             Logging.Processes AS p ON perf.ProcessId = p.Id INNER JOIN
+             Logging.Apps AS a ON p.AppId = a.Id
+WHERE (perf.Timestamp > DATEADD(HOUR, - 24, GETDATE()))
+GO
+/****** Object:  View [Logging].[TraceLogsLastDay]    Script Date: 1/4/2019 11:55:47 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [Logging].[TraceLogsLastDay]
+AS
+SELECT        TOP (100) PERCENT t.Id, t.Timestamp, t.CorrelationId, h.Name AS HostName, a.Name AS AppName, p.Name AS ProcessName, l.Id AS LogLevelId, l.Name AS LogLevel, t.Message
+FROM            Logging.TraceLogs AS t INNER JOIN
+                         Logging.Hosts AS h ON t.HostId = h.Id INNER JOIN
+                         Logging.Processes AS p ON t.ProcessId = p.Id INNER JOIN
+                         Logging.Apps AS a ON p.AppId = a.Id INNER JOIN
+                         Logging.TraceLogLevels AS l ON t.LevelId = l.Id
+WHERE        (t.Timestamp > DATEADD(HOUR, - 24, GETDATE()))
+
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
@@ -502,9 +503,9 @@ Begin DesignProperties =
       End
    End
 End
-' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'MetricLogsLastDay'
+' , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'MetricLogsLastDay'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'MetricLogsLastDay'
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'MetricLogsLastDay'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
@@ -644,9 +645,9 @@ Begin DesignProperties =
       End
    End
 End
-' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'OperationsAvgDuration'
+' , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'OperationsAvgDuration'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'OperationsAvgDuration'
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'OperationsAvgDuration'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
@@ -775,9 +776,9 @@ Begin DesignProperties =
       End
    End
 End
-' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'OperationsAvgDurationLastDay'
+' , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'OperationsAvgDurationLastDay'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'OperationsAvgDurationLastDay'
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'OperationsAvgDurationLastDay'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
@@ -916,9 +917,9 @@ Begin DesignProperties =
       End
    End
 End
-' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'PerformanceLogsLastDay'
+' , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'PerformanceLogsLastDay'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'PerformanceLogsLastDay'
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'PerformanceLogsLastDay'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
@@ -1067,23 +1068,21 @@ Begin DesignProperties =
       End
    End
 End
-' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'TraceLogsLastDay'
+' , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'TraceLogsLastDay'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'TraceLogsLastDay'
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'Logging', @level1type=N'VIEW',@level1name=N'TraceLogsLastDay'
 GO
 
 
 
 
-USE [AppLogs]
+INSERT [Logging].[TraceLogLevels] ([Id], [Name]) VALUES (1, N'Critical Error')
 GO
-INSERT [dbo].[TraceLogLevels] ([Id], [Name]) VALUES (1, N'Critical Error      ')
+INSERT [Logging].[TraceLogLevels] ([Id], [Name]) VALUES (5, N'Debug')
 GO
-INSERT [dbo].[TraceLogLevels] ([Id], [Name]) VALUES (5, N'Debug               ')
+INSERT [Logging].[TraceLogLevels] ([Id], [Name]) VALUES (2, N'Error')
 GO
-INSERT [dbo].[TraceLogLevels] ([Id], [Name]) VALUES (2, N'Error               ')
+INSERT [Logging].[TraceLogLevels] ([Id], [Name]) VALUES (4, N'Info')
 GO
-INSERT [dbo].[TraceLogLevels] ([Id], [Name]) VALUES (4, N'Info                ')
-GO
-INSERT [dbo].[TraceLogLevels] ([Id], [Name]) VALUES (3, N'Warning             ')
+INSERT [Logging].[TraceLogLevels] ([Id], [Name]) VALUES (3, N'Warning')
 GO
