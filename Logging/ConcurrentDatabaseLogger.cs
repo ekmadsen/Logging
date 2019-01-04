@@ -12,17 +12,17 @@ namespace ErikTheCoder.Logging
     public class ConcurrentDatabaseLogger : ConcurrentLoggerBase
     {
         private const int _connectionTimeoutSec = 5;
-        private const string _sqlGetHostId = "select id from hosts where name = @hostname";
-        private const string _sqlInsertHost = "insert into hosts (name) output inserted.id values (@hostname)";
-        private const string _sqlGetAppId = "select id from apps where name = @appname";
-        private const string _sqlInsertApp = "insert into apps (name) output inserted.id values (@appname)";
-        private const string _sqlGetProcessId = "select p.id from processes p inner join apps a on p.appid = a.id where a.id = @appid and p.name = @processname";
-        private const string _sqlInsertProcess = "insert into processes (appid, name) output inserted.id values (@appid, @processName)";
-        private const string _sqlInsertTraceLogs = "insert into tracelogs (hostId, processId, timestamp, correlationid, levelid, message) " +
+        private const string _sqlGetHostId = "select id from logging.hosts where name = @hostname";
+        private const string _sqlInsertHost = "insert into logging.hosts (name) output inserted.id values (@hostname)";
+        private const string _sqlGetAppId = "select id from logging.apps where name = @appname";
+        private const string _sqlInsertApp = "insert into logging.apps (name) output inserted.id values (@appname)";
+        private const string _sqlGetProcessId = "select p.id from logging.processes p inner join logging.apps a on p.appid = a.id where a.id = @appid and p.name = @processname";
+        private const string _sqlInsertProcess = "insert into logging.processes (appid, name) output inserted.id values (@appid, @processName)";
+        private const string _sqlInsertTraceLogs = "insert into logging.tracelogs (hostId, processId, timestamp, correlationid, levelid, message) " +
             "values (@hostId, @processId, @timestamp, @correlationid, @loglevel, @message)";
-        private const string _sqlInsertPerformanceLogs = "insert into performancelogs (hostId, processId, timestamp, correlationid, operationname, operationduration) " +
+        private const string _sqlInsertPerformanceLogs = "insert into logging.performancelogs (hostId, processId, timestamp, correlationid, operationname, operationduration) " +
             "values (@hostId, @processId, @timestamp, @correlationid, @operationname, @operationduration)";
-        private const string _sqlInsertMetricLogs = "insert into metriclogs (hostId, processId, timestamp, correlationid, itemid, metricname, datetimevalue, intvalue, textvalue) " +
+        private const string _sqlInsertMetricLogs = "insert into logging.metriclogs (hostId, processId, timestamp, correlationid, itemid, metricname, datetimevalue, intvalue, textvalue) " +
             "values (@hostId, @processId, @timestamp, @correlationid, @itemid, @metricname, @datetimevalue, @intvalue, @textvalue)";
         private readonly string _connection;
         private readonly int? _hostId;
