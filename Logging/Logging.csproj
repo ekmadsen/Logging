@@ -12,7 +12,7 @@
     <PackageProjectUrl>https://github.com/ekmadsen/Logging</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ekmadsen/Logging</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
-    <PackageTags>logging</PackageTags>
+    <PackageTags>logging dotnet-core dotnet-standard</PackageTags>
     <Copyright>2019</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
