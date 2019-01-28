@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using JetBrains.Annotations;
 
 
@@ -6,13 +7,13 @@ namespace ErikTheCoder.Logging
 {
     public class SimpleException
     {
-        public string Type { get; [UsedImplicitly] set; }
-        public Guid CorrelationId { get; [UsedImplicitly] set; }
-        public string ApplicationName { get; [UsedImplicitly] set; }
-        public string ProcessName { get; [UsedImplicitly] set; }
-        public string Message { get; [UsedImplicitly] set; }
-        public string StackTrace { get; [UsedImplicitly] set; }
-        public SimpleException InnerException { get; [UsedImplicitly] set; }
+        [UsedImplicitly] public string Type { get; [UsedImplicitly] set; }
+        [UsedImplicitly] public Guid CorrelationId { get; [UsedImplicitly] set; }
+        [UsedImplicitly] public string ApplicationName { get; [UsedImplicitly] set; }
+        [UsedImplicitly] public string ProcessName { get; [UsedImplicitly] set; }
+        [UsedImplicitly] public string Message { get; [UsedImplicitly] set; }
+        [UsedImplicitly] public string StackTrace { get; [UsedImplicitly] set; }
+        [UsedImplicitly] public SimpleException InnerException { get; [UsedImplicitly] set; }
 
 
         public SimpleException() : this(null, Guid.Empty, null, null, null)
@@ -39,10 +40,6 @@ namespace ErikTheCoder.Logging
 
         public SimpleException(Exception Exception, Guid CorrelationId, string ApplicationName, string ProcessName)
         {
-            Type = Exception.GetType().FullName;
-            this.CorrelationId = CorrelationId;
-            this.ApplicationName = ApplicationName;
-            this.ProcessName = ProcessName;
             // Recursively copy exception details from .NET Exception object to this object.
             Exception exception = Exception;
             SimpleException simpleException = this;
@@ -62,6 +59,27 @@ namespace ErikTheCoder.Logging
                     simpleException = simpleException.InnerException;
                 }
             }
+        }
+
+
+        public string GetSummary(bool IncludeStackTrace = false, bool RecurseInnerExceptions = false)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            SimpleException exception = this;
+            while (exception != null)
+            {
+                // Include spaces to align text.
+                stringBuilder.AppendLine($"Exception Type =             {exception.Type}");
+                if (exception.CorrelationId != Guid.Empty) stringBuilder.AppendLine($"Exception Correlation ID =   {exception.CorrelationId}");
+                if (exception.ApplicationName != null) stringBuilder.AppendLine($"Exception App Name =         {exception.ApplicationName}");
+                if (exception.ProcessName != null) stringBuilder.AppendLine($"Exception Process Name =     {exception.ProcessName}");
+                stringBuilder.AppendLine($"Exception Message =          {exception.Message}");
+                if (IncludeStackTrace) stringBuilder.AppendLine($"Exception StackTrace =       {exception.StackTrace?.TrimStart(' ')}");
+                stringBuilder.AppendLine();
+                stringBuilder.AppendLine();
+                exception = RecurseInnerExceptions ? exception.InnerException : null;
+            }
+            return stringBuilder.ToString();
         }
     }
 }
