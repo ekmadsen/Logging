@@ -123,7 +123,7 @@ logger.LogPerformance(correlationId, nameof(ExpensiveOperation), stopwatch.Elaps
 logger.LogPerformance(nameof(ExpensiveOperation), stopwatch.Elapsed);
 ```
 
-Log a metric, such as the order of a particular product by a particular user:
+Log a metric, such as a sales order of a particular product by a particular user:
 ```C#
 logger.LogMetric(correlationId, product.Number, "Orders by Product Number", order[product.Number].Quantity);
 logger.LogMetric(correlationId, HttpContext.User.Identity.Name, "Orders by User", order.TotalQuantity);
