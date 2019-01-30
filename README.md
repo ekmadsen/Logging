@@ -148,7 +148,7 @@ order by t.Id desc
 
 ![Trace Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/TraceLogs.png)
 
-Note that cross-process logs may appear slightly out-of-order even if two processes (such as website and service) run on the same machine because each process writes to its own queue.  The queues are read by ThreadPool threads so the order logs are read from the queue and written to the data store is not guaranteed.  In other words, logs from two processes that run sequentially (website calls service and waits for response) may interweave.  However, the order of logs written by a single process is preserved.
+Note that cross-process logs may appear slightly out-of-order even if two processes (such as a website and a service) run on the same machine because each process writes to its own queue.  The queues are read by ThreadPool threads so the order logs are read from the queue and written to the data store is not guaranteed.  In other words, logs from two processes that run sequentially (website calls service and waits for response) may interweave.  However, the order of logs written by a single process on a single machine is preserved.
 
 Find all tracing logs for a given application since a given time:
 ```SQL
