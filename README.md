@@ -86,7 +86,13 @@ ILogger consolidatedLogger = new ConsolidatedLogger(new List<ILogger>{ fileLogge
 Configure dependency injection in ASP.NET Core:
 ```C#
 Services.AddSingleton(typeof(ILogger), consolidatedLogger);
+
 // Now any controller can request the logger by including an "ILogger Logger" parameter in its constructor.
+public AccountController(IAppSettings AppSettings, ILogger Logger, IAccountService AccountService) :
+   base(AppSettings, Logger)
+{
+   _accountService = AccountService;
+}
 ```
 
 Log a message with or without a correlation ID:
