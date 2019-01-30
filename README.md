@@ -226,6 +226,8 @@ Exception StackTrace =       at System.Data.SqlClient.SqlConnection.OnError(SqlE
    at System.Data.SqlClient.SqlDataReader.<>c__DisplayClass190_0.b__1(Task t)
    at System.Data.SqlClient.SqlDataReader.InvokeRetryable[T](Func`2 moreFunc, TaskCompletionSource`1 source, IDisposable objectToDispose)
 --- End of stack trace from previous location where exception was thrown ---
+   at Dapper.SqlMapper.ExecuteScalarImplAsync[T](IDbConnection cnn, CommandDefinition command) in C:\projects\dapper\Dapper\SqlMapper.Async.cs:line 1217
+   at ErikTheCoder.Identity.Service.Controllers.AccountController.RegisterAsync(RegisterRequest Request) in C:\Users\Erik\Documents\Visual Studio 2017\Projects\IdentityService\Service\Controllers\AccountController.cs:line 128
    at [trimmed for brevity]
    at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
    at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
