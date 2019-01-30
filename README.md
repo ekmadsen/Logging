@@ -21,7 +21,7 @@ I was motivated to write my own logging component for the following reasons.
 * Targets .NET Standard 2.0 so it may be used in .NET Core or .NET Framework runtimes.
 * Writes tracing, performance, and metric logs.
 * Writes to files (one file each for tracing, performance, and metric) or a database.
-* Writes to both files and a database via the[ConsolidatedLogger](https://github.com/ekmadsen/Logging/blob/master/Logging/ConsolidatedLogger.cs) class.  Why write to both targets?  You could configure the file and database logger differently or enable one of the loggers to send trace messages to the Console in addition to its target.
+* Writes to both files and a database via the [ConsolidatedLogger](https://github.com/ekmadsen/Logging/blob/master/Logging/ConsolidatedLogger.cs) class.  Why write to both targets?  You could configure the file and database loggers differently or enable one of the loggers to send trace messages to the Console in addition to its target.  Typically, I write only to a database logger.
 * Includes a CorrelationId so you may see related messages across tracing, performance, and metric logs.
 * Configurable
   * AppName and ProcessName.  The ProcessName is meant to indicate the layer in your n-tier application architecture, such as "Website", "Service", or "Data Load".
@@ -40,16 +40,18 @@ I was motivated to write my own logging component for the following reasons.
 
 ## Related Solution ##
 
+If you're developing and ASP.NET Core MVC website or WebAPI service, I highly recommend installing my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution, which uses this component to *automatically* write tracing, performance, and metric logs for all invocations of controller actions (page hits and service method calls).  It also automatically writes trace logs for all uncaught exceptions and responds to the caller with exception details formatted as JSON (for services) or HTML (for websites).  This enables exception details to flow from a SQL database through a service to a website, displaying a full stack trace (related by CorrelationId) in the web browser.  This greatly reduces the time it takes for a programmer to identify the root cause of an application exceptions.
 
+What do I mean by *automatic*?  The programmer need not include any boilerplate code in their controllers.  See my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution for more details.
 
 ## Limitations ##
 
-This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/blockingcollection-overview), so logs accumulate in process memory before they're written to disk or to a database.  Therefore, this component may use large amounts of memory in high-traffic websites and services.  This has not been an issue for me, though I admit I have not stress-tested it.
+This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/blockingcollection-overview), so logs accumulate in process memory before they're written to disk or to a database.  This async design (fast I/O write to memory on application thread, slow I/O write to a data store on background thread) is what makes this component so fast, causing practically zero latency on your application thread.  As a trade off (speed for memory), this component may use large amounts of memory in high-traffic websites and services.  This has not been an issue for me, though I admit I have not stress-tested the component.
 
 ## Installation ##
 
-* Use SQL Server Management Studio to create a new database.
-* Run the CreateDatabase.sql script to create the tables and views used by this solution.  The script creates SQL objects in a "Logging" schema.  Obviously, if you install this solution in a dedicated database there's no risk of colliding with the names of existing SQL objects.  However, if you install this solution in an existing database the schema minimizes the risk of colliding with existing SQL objects.
+* Use SQL Server Management Studio to locate an existing database or create a new database.
+* Run the [CreateDatabase.sql](https://github.com/ekmadsen/Logging/blob/master/CreateDatabase.sql) script to create the tables and views used by this solution.  The script creates SQL objects in a "Logging" schema.  Obviously, if you install this solution in a dedicated database there's no risk of colliding with the names of existing SQL objects.  However, if you install this solution in an existing database the schema minimizes the risk of colliding with existing SQL objects.
 * Reference this component in your solution via its [NuGet package](https://www.nuget.org/packages/ErikTheCoder.Logging/).
 
 ## Usage (Writing Logs) ##
