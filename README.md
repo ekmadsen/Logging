@@ -92,7 +92,7 @@ logger.Log($"{Program.AppSettings.Logger.ProcessName} starting.");
 Configure dependency injection in ASP.NET Core:
 ```C#
 Services.AddSingleton(typeof(ILogger), consolidatedLogger);
-// Now any controller can request the logger by including an ILogger Logger parameter in its constructor.
+// Now any controller can request the logger by including an "ILogger Logger" parameter in its constructor.
 ```
 
 Log an exception with or without a correlation ID:
