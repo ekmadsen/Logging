@@ -83,16 +83,16 @@ ILogger databaseLogger = new ConcurrentDatabaseLogger(databaseLoggerSettings);
 ILogger consolidatedLogger = new ConsolidatedLogger(new List<ILogger>{ fileLogger, databaseLogger });
 ```
 
-Log a message with or without a correlation ID:
-```C#
-logger.Log(correlationId, $"{Program.AppSettings.Logger.ProcessName} starting.");
-logger.Log($"{Program.AppSettings.Logger.ProcessName} starting.");
-```
-
 Configure dependency injection in ASP.NET Core:
 ```C#
 Services.AddSingleton(typeof(ILogger), consolidatedLogger);
 // Now any controller can request the logger by including an "ILogger Logger" parameter in its constructor.
+```
+
+Log a message with or without a correlation ID:
+```C#
+logger.Log(correlationId, $"{Program.AppSettings.Logger.ProcessName} starting.");
+logger.Log($"{Program.AppSettings.Logger.ProcessName} starting.");
 ```
 
 Log an exception with or without a correlation ID:
