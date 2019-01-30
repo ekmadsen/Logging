@@ -40,13 +40,13 @@ I was motivated to write my own logging component for the following reasons.
 
 ## Related Solution ##
 
-If you're developing an ASP.NET Core MVC website or WebAPI service, I highly recommend installing my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution, which uses this component to *automatically* write tracing, performance, and metric logs for all invocations of controller actions (page hits and service method calls).  It also automatically writes trace logs for all uncaught exceptions and responds to the caller with exception details formatted as JSON (for services) or HTML (for websites).  This enables exception details to flow from a SQL database through a service to a website, displaying a full stack trace (related by CorrelationId) in the web browser.  This greatly reduces the time it takes for a programmer to identify the root cause of application exceptions.
+If you're developing an ASP.NET Core MVC website or WebAPI service, I highly recommend installing my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution, which uses this component to *automatically* write tracing, performance, and metric logs for all invocations of controller actions (page hits and service method calls).  It also automatically writes trace logs for all uncaught exceptions and responds to the caller with exception details formatted as JSON (for services) or HTML (for websites).  This enables exception details to flow from a SQL database through a service to a website, displaying a full cross-process stack trace (related by CorrelationId) in the web browser.  This greatly reduces the time it takes for a programmer to identify the root cause of application exceptions.
 
 What do I mean by *automatic*?  The programmer need not include any boilerplate code in their controllers.  See my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution for more details.
 
 ## Limitations ##
 
-This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/blockingcollection-overview), so logs accumulate in process memory before they're written to disk or to a database.  This async design (fast I/O writes to memory on application thread, slow I/O writes to a data store on background thread) is what makes this component so fast, causing practically zero latency on your application thread.  As a trade off (speed for memory), this component may use large amounts of memory in high-traffic websites and services.  This has not been an issue for me, though I admit I have not stress-tested the component.
+This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/blockingcollection-overview), so logs accumulate in process memory before they're written to disk or to a database.  This async design (fast I/O writes to memory on the application thread, slow I/O writes to a data store on a background thread) is what makes this component so fast, causing practically zero latency on your application thread.  As a trade off (speed for memory), this component may use large amounts of memory in high-traffic websites and services.  This has not been an issue for me, though I admit I have not stress-tested the component.
 
 ## Installation ##
 
@@ -56,6 +56,65 @@ This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/d
 
 ## Usage (Writing Logs) ##
 
+Construct file and database loggers:
+```C#
+Guid correlationId = Guid.NewGuid(); // Will use in later code sample.
+string appName = "Sales Orders";
+string processName = "Service";
+// I recommend you bind these settings directly from appSettings.json, but I'll write them explicitly here for clarity.
+FileLoggerSettings fileLoggerSettings = new FileLoggerSettings
+{
+    AppName = appName,
+    ProcessName = serviceName,
+    MessageFormat = MessageFormat.IncludeTimestampCorIdLevel,
+    TraceFilename = @"C:\Users\Erik\Documents\SalesOrdersTrace.log",
+    PerformanceFilename = @"C:\Users\Erik\Documents\SalesOrdersPerformance.csv",
+    MetricFilename = @"C:\Users\Erik\Documents\SalesOrdersMetric.csv"
+};
+DatabaseLoggerSettings databaseLoggerSettings = new DatabaseLoggerSettings
+{
+    AppName = appname,
+    ProcessName = processName,
+    TraceLogLevel = LogLevel.Debug,
+    Connection = "Data Source=SqlServerName;Initial Catalog=LoggingDatabaseName;Integrated Security=True"    
+};
+ILogger fileLogger = new ConcurrentFileLogger(fileLoggerSettings);
+ILogger databaseLogger = new ConcurrentDatabaseLogger(databaseLoggerSettings);
+ILogger consolidatedLogger = new ConsolidatedLogger(new List<ILogger>{ fileLogger, databaseLogger });
+```
 
+Log a message with or without a correlation ID:
+```C#
+logger.Log(correlationId, $"{Program.AppSettings.Logger.ProcessName} starting.");
+logger.Log($"{Program.AppSettings.Logger.ProcessName} starting.");
+```
+
+Configure dependency injection in ASP.NET Core:
+```C#
+Services.AddSingleton(typeof(ILogger), consolidatedLogger);
+// Now any controller can request the logger by including an ILogger Logger parameter in its constructor.
+```
+
+Log an exception with or without a correlation ID:
+```C#
+try
+{
+    Foo();
+}
+catch(Exception exception)
+{
+    logger.Log(correlationId, exception);
+    logger.Log(exception);
+}
+```
+
+Log performance with or without a correlation ID:
+```C#
+Stopwatch stopwatch = Stopwatch.StartNew();
+ExpensiveOperation();
+stopwatch.Stop();
+logger.LogPerformance(correlationId, nameof(ExpensiveOperation), stopwatch.Elapsed);
+logger.LogPerformance(nameof(ExpensiveOperation), stopwatch.Elapsed);
+```
 
 ## Benefit (Reading Logs)  ##
