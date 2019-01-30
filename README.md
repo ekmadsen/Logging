@@ -58,7 +58,7 @@ This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/d
 
 Construct file and database loggers:
 ```C#
-Guid correlationId = Guid.NewGuid(); // Will use in later code sample.
+Guid correlationId = Guid.NewGuid(); // Will use in later code samples.
 string appName = "Sales Orders";
 string processName = "Service";
 // I recommend you bind these settings directly from appSettings.json, but I'll write them explicitly for clarity.
@@ -127,6 +127,10 @@ Log a metric, such as the order of a particular product by a particular user:
 ```C#
 logger.LogMetric(correlationId, product.Number, "Orders by Product Number", order[product.Number].Quantity);
 logger.LogMetric(correlationId, HttpContext.User.Identity.Name, "Orders by User", order.TotalQuantity);
+
+logger.LogMetric(product.Number, "Orders by Product Number", order[product.Number].Quantity);
+logger.LogMetric(HttpContext.User.Identity.Name, "Orders by User", order.TotalQuantity);
+
 ```
 
 ## Benefit (Reading Logs)  ##
