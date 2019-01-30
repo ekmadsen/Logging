@@ -135,7 +135,7 @@ logger.LogMetric(HttpContext.User.Identity.Name, "Orders by User", order.TotalQu
 
 ## Benefit (Reading Logs)  ##
 
-I'll dispense with my sales order example, since I don't actually have that data.  I was just using sales orders to illustrate what's possible with my logger.  I'll show you instead the data automatically logged by by my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution, which uses this component.
+I'll dispense with my sales order example, since I don't actually have that data.  I used a sales orders example to illustrate what's possible with my logger.  I'll show you instead the data automatically logged by by my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution, which uses this component.
 
 Find all tracing logs related to a given correlation ID:
 
