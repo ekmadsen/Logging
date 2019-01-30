@@ -216,7 +216,7 @@ Exception Type =             System.Data.SqlClient.SqlException
 Exception Correlation ID =   9da80707-dfaa-4c7f-aa59-c4ca813abe9a
 Exception App Name =         Identity Service
 Exception Process Name =     Service
-Exception Message =          Cannot insert duplicate key row in object 'Identity.Users' with unique index 'UX_Users_EmailAddress'. The duplicate key value is (ekmadsen@comcast.net).
+Exception Message =          Cannot insert duplicate key row in object 'Identity.Users' with unique index 'UX_Users_EmailAddress'. The duplicate key value is (username@emailservice.net).
 Exception StackTrace =       at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
    at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
    at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
