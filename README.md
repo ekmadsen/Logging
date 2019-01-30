@@ -124,3 +124,45 @@ logger.LogMetric(correlationId, HttpContext.User.Identity.Name, "Orders by User"
 ```
 
 ## Benefit (Reading Logs)  ##
+
+I dispense with my sales order example, since I don't actually have that data.  I was just using sales orders to illustrate what's possible with my logger.  I'll show you instead the data automatically logged by by my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution, which uses this component.
+
+Find all tracing logs related to a given correlation ID:
+
+```SQL
+select t.*
+from[Logging].TraceLogsLastDay t
+where t.CorrelationId = '9da80707-dfaa-4c7f-aa59-c4ca813abe9a'
+order by t.Id desc
+```
+
+![Trace Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/TraceLogs.png)
+
+Note that cross-process logs may appear slightly out-of-order even if two processes (such as website and service) run on the same machine because each process writes to its own queue.  The queues are read by ThreadPool threads so the order logs are read from the queue and written to the data store is not guaranteed.  In other words, logs from two processes that run sequentially (website calls service and waits for response) may interweave.  However, the order of logs written by a single process is preserved.
+
+Find all tracing logs for a given application since a given time:
+```SQL
+select t.*
+from[Logging].TraceLogsLastDay t
+where t.Timestamp > '01/30/2019 9:42 AM'
+order by t.Id desc
+```
+
+Find all critical errors:
+```SQL
+select t.*
+from[Logging].TraceLogsLastDay t
+where t.LogLevel = 'Critical Error'
+order by t.Id desc
+```
+
+See the performance of code:
+```SQL
+select p.*
+from [Logging].OperationsAvgDurationLastDay p
+order by p.AppName asc, p.OperationName asc
+```
+
+![Performance Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/PerformanceLogs.png)
+
+
