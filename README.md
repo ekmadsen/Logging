@@ -166,6 +166,71 @@ where t.LogLevel = 'Critical Error'
 order by t.Id desc
 ```
 
+Once again, I'll promote my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution that enables exception details to flow from a SQL database through a service to a website, displaying a full cross-process stack trace (related by CorrelationId) in the web browser and in the logs.  It's manifestly clear from this stack trace that failure to check the uniqueness of the new user's email address caused the folowing exception:
+```
+Exception Type =             ErikTheCoder.Logging.SimpleException
+Exception Correlation ID =   9da80707-dfaa-4c7f-aa59-c4ca813abe9a
+Exception App Name =         MadPoker
+Exception Process Name =     Website
+Exception Message =          POST with application/x-www-form-urlencoded content type to /account/register resulted in HTTP status code 500.
+Exception StackTrace =       at System.Environment.get_StackTrace()
+   at [trimmed for brevity]
+   at ErikTheCoder.MadPoker.Website.Controllers.AccountController.Register(RegisterModel Model) in C:\Users\Erik\Documents\Visual Studio 2017\Projects\MadPoker\Website\Controllers\AccountController.cs:line 95
+   at [trimmed for brevity]
+   at System.Net.Http.HttpContent.WaitAndReturnAsync[TState,TResult](Task waitTask, TState state, Func`2 returnFunc)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+
+Exception Type =             ErikTheCoder.Logging.SimpleException
+Exception Correlation ID =   9da80707-dfaa-4c7f-aa59-c4ca813abe9a
+Exception App Name =         MadPoker
+Exception Process Name =     Website
+Exception Message =          An exception occurred when a Refit proxy called a service method.
+Exception StackTrace =       at System.Environment.get_StackTrace()
+   at [trimmed for brevity]
+   at ErikTheCoder.MadPoker.Website.Controllers.AccountController.Register(RegisterModel Model) in C:\Users\Erik\Documents\Visual Studio 2017\Projects\MadPoker\Website\Controllers\AccountController.cs:line 95
+   at [trimmed for brevity]
+   at System.Net.Http.HttpContent.WaitAndReturnAsync[TState,TResult](Task waitTask, TState state, Func`2 returnFunc)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+
+Exception Type =             ErikTheCoder.Logging.SimpleException
+Exception Correlation ID =   9da80707-dfaa-4c7f-aa59-c4ca813abe9a
+Exception App Name =         Identity Service
+Exception Process Name =     Service
+Exception Message =          POST with application/json; charset=utf-8 content type to /account/register resulted in HTTP status code 500.
+Exception StackTrace =       at System.Environment.get_StackTrace()
+   at [trimmed for brevity]
+   at ErikTheCoder.Identity.Service.Controllers.AccountController.RegisterAsync(RegisterRequest Request) in C:\Users\Erik\Documents\Visual Studio 2017\Projects\IdentityService\Service\Controllers\AccountController.cs:line 128
+   at System.Data.SqlClient.SqlCommand.<>c__DisplayClass127_2.b__1(Task`1 readTask)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+
+Exception Type =             System.Data.SqlClient.SqlException
+Exception Correlation ID =   9da80707-dfaa-4c7f-aa59-c4ca813abe9a
+Exception App Name =         Identity Service
+Exception Process Name =     Service
+Exception Message =          Cannot insert duplicate key row in object 'Identity.Users' with unique index 'UX_Users_EmailAddress'. The duplicate key value is (ekmadsen@comcast.net).
+Exception StackTrace =       at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at System.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at System.Data.SqlClient.SqlDataReader.<>c__DisplayClass190_0.b__1(Task t)
+   at System.Data.SqlClient.SqlDataReader.InvokeRetryable[T](Func`2 moreFunc, TaskCompletionSource`1 source, IDisposable objectToDispose)
+--- End of stack trace from previous location where exception was thrown ---
+   at [trimmed for brevity]
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+```
+
 See the performance of code:
 ```SQL
 select p.*
