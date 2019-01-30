@@ -165,4 +165,16 @@ order by p.AppName asc, p.OperationName asc
 
 ![Performance Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/PerformanceLogs.png)
 
+See page hits:
+
+```SQL
+select m.AppName, m.ItemId, count(*) as PageHits
+from [Logging].MetricLogsLastDay m
+where m.MetricName = 'Page Hit'
+group by m.AppName, m.ItemId
+order by count(*) desc
+```
+
+![Metric Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/MetricLogs.png)
+
 
