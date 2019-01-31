@@ -1,6 +1,7 @@
 # Logging
 A zero latency, thread-safe logger that writes to files and / or a database.
 
+
 ## Motivation ##
 
 I was motivated to write my own logging component for the following reasons.
@@ -14,6 +15,7 @@ I was motivated to write my own logging component for the following reasons.
    - If the initial effort to [grok](http://www.grokcode.com/95/definition-and-origin-of-grok/) the third-party components is high or effort to write your own component is low...
    - If persistent effort is required to work around kludges caused by third-party components that don't do exectly what you need...
 5. Write your own code.
+
 
 ## Features ##
 
@@ -39,19 +41,23 @@ I was motivated to write my own logging component for the following reasons.
     * IncludeTimestampCorId
     * IncludeTimestampCorIdLevel
 
+
 ## Related Solution ##
 
 If you're developing an ASP.NET Core MVC website or WebAPI service, I highly recommend installing my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution, which uses this component to *automatically* write tracing, performance, and metric logs for all invocations of controller actions (page hits and service method calls).  See my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution for more details.
 
+
 ## Limitations ##
 
 This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/blockingcollection-overview), so logs accumulate in process memory before they're written to disk or to a database.  This async design (fast I/O writes to memory on the application thread, slow I/O writes to a data store on a background thread) is what makes this component so fast, causing practically zero latency on your application thread.  As a trade off (speed for memory), this component may use large amounts of memory in high-traffic websites and services.  This has not been an issue for me, though I admit I have not stress-tested the component.
+
 
 ## Installation ##
 
 * Use SQL Server Management Studio to locate an existing database or create a new database.
 * Run the [CreateDatabase.sql](https://github.com/ekmadsen/Logging/blob/master/CreateDatabase.sql) script to create the tables and views used by this solution.  The script creates SQL objects in a "Logging" schema.  Obviously, if you install this solution in a dedicated database there's no risk of colliding with the names of existing SQL objects.  However, if you install this solution in an existing database the schema minimizes the risk of colliding with existing SQL objects.
 * Reference this component in your solution via its [NuGet package](https://www.nuget.org/packages/ErikTheCoder.Logging/).
+
 
 ## Usage (Writing Logs) ##
 
@@ -132,6 +138,7 @@ logger.LogMetric(product.Number, "Orders by Product Number", order[product.Numbe
 logger.LogMetric(HttpContext.User.Identity.Name, "Orders by User", order.TotalQuantity);
 
 ```
+
 
 ## Benefits (Reading Logs)  ##
 
