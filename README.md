@@ -25,13 +25,14 @@ I was motivated to write my own logging component for the following reasons.
 * Includes a CorrelationId so you may see related messages across tracing, performance, and metric logs.
 * Configurable
   * AppName and ProcessName.  The ProcessName is meant to indicate the layer in your n-tier application architecture, such as "Website", "Service", or "Data Load".
+  * TraceFilename, PerformanceFilename, and MetricFilename
   * TraceLogLevel
     * CriticalError
     * Error
     * Warning
     * Info
     * Debug
-  * TraceFilename, PerformanceFilename, and MetricFilename
+  * SendTraceMessagesToConsole (true or false, in addition to the target file or database)
   * MessageFormat (for text files)
     * MessageOnly
     * IncludeTimestamp
@@ -150,7 +151,7 @@ order by t.Id desc
 
 Note that cross-process logs may appear slightly out-of-order even if two processes (such as a website and a service) run on the same machine because each process writes to its own queue.  The queues are read by ThreadPool threads so the order logs are read from the queue and written to the data store is not guaranteed.  In other words, logs from two processes that run sequentially (website calls service and waits for response) may interweave.  However, the order of logs written by a single process on a single machine is preserved.
 
-Find all tracing logs for a given application since a given time:
+Find all tracing logs for a given application since a given point in time:
 ```SQL
 select t.*
 from[Logging].TraceLogsLastDay t
@@ -265,3 +266,5 @@ In SQL Server database:
 In Excel (opening the .csv text file written by logger):
 
 ![Metric Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/MetricLogsExcel.png)
+
+The metric log is intended to collect data to be analyzed using SQL "group by" queries with count, sum, or avg functions.
