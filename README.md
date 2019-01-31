@@ -279,7 +279,8 @@ In Excel (opening the .csv text file written by logger):
 See metrics for a given correlation ID:
 
 ```SQL
-select m.Timestamp, m.HostName, m.AppName, m.ProcessName, m.ItemId, m.MetricName, m.IntValue, m.TextValue, m.DateTimeValue
+select m.Timestamp, m.HostName, m.AppName, m.ProcessName, m.ItemId, m.MetricName,
+  m.IntValue, m.TextValue, m.DateTimeValue
 from [Logging].MetricLogsLastDay m
 where m.CorrelationId = 'F4B3F067-CC8C-4329-AAA3-9CF60D646AAE'
 order by m.Id desc
