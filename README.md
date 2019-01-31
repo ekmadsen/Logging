@@ -148,7 +148,7 @@ where t.CorrelationId = '9DA80707-DFAA-4C7F-AA59-C4CA813ABE9A'
 order by t.Id desc
 ```
 
-![Trace Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/TraceLogs.png)
+![Trace Logs](https://raw.githubusercontent.com/ekmadsen/Logging/master/TraceLogs.png)
 
 Note that cross-process logs may appear slightly out-of-order even if two processes (such as a website and a service) run on the same machine because each process writes to its own queue.  The queues are read by ThreadPool threads so the order logs are read from the queue and written to the data store is not guaranteed.  In other words, logs from two processes that run sequentially (website calls service and waits for response) may interweave.  However, the order of logs written by a single process on a single machine is preserved.
 
@@ -244,11 +244,11 @@ order by p.AppName asc, p.OperationName asc
 
 In SQL Server database:
 
-![Performance Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/PerformanceLogs.png)
+![Performance Logs](https://raw.githubusercontent.com/ekmadsen/Logging/master/PerformanceLogs.png)
 
 In Excel (opening the .csv text file written by logger):
 
-![Performance Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/PerformanceLogsExcel.png)
+![Performance Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/master/PerformanceLogsExcel.png)
 
 See page hits:
 
@@ -262,10 +262,10 @@ order by count(*) desc
 
 In SQL Server database:
 
-![Metric Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/MetricLogs.png)
+![Metric Logs](https://raw.githubusercontent.com/ekmadsen/Logging/master/MetricLogs.png)
 
 In Excel (opening the .csv text file written by logger):
 
-![Metric Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/MetricLogsExcel.png)
+![Metric Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/master/MetricLogsExcel.png)
 
 The metric log is intended to collect data to be analyzed using SQL "group by" queries with count, sum, or avg functions.
