@@ -250,6 +250,14 @@ In Excel (opening the .csv text file written by logger):
 
 ![Performance Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/master/PerformanceLogsExcel.png)
 
+See the performance of code for a given correlation ID:
+
+```SQL
+select * from [Logging].PerformanceLogsLastDay p
+where p.CorrelationId = 'F4B3F067-CC8C-4329-AAA3-9CF60D646AAE'
+order by p.Id desc
+```
+
 See page hits:
 
 ```SQL
@@ -267,5 +275,14 @@ In SQL Server database:
 In Excel (opening the .csv text file written by logger):
 
 ![Metric Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/master/MetricLogsExcel.png)
+
+See metrics for a given correlation ID:
+
+```SQL
+select m.Timestamp, m.HostName, m.AppName, m.ProcessName, m.ItemId, m.MetricName, m.IntValue, m.TextValue, m.DateTimeValue
+from [Logging].MetricLogsLastDay m
+where m.CorrelationId = 'F4B3F067-CC8C-4329-AAA3-9CF60D646AAE'
+order by m.Id desc
+```
 
 The metric log is intended to collect data to be analyzed using SQL "group by" queries with count, sum, or avg functions.
