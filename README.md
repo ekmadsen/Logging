@@ -62,7 +62,7 @@ Construct file and database loggers:
 Guid correlationId = Guid.NewGuid(); // Will use in later code samples.
 string appName = "Sales Orders";
 string processName = "Service";
-// I recommend you bind these settings directly from appSettings.json, but I'll write them explicitly for clarity.
+// I recommend you bind these settings directly from appSettings.json, but I'll write them here explicitly for clarity.
 FileLoggerSettings fileLoggerSettings = new FileLoggerSettings
 {
     AppName = appName,
