@@ -240,7 +240,13 @@ from [Logging].OperationsAvgDurationLastDay p
 order by p.AppName asc, p.OperationName asc
 ```
 
+In SQL Server database:
+
 ![Performance Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/PerformanceLogs.png)
+
+In Excel (opening the .csv text file written by logger):
+
+![Performance Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/PerformanceLogsExcel.png)
 
 See page hits:
 
@@ -252,6 +258,10 @@ group by m.AppName, m.ItemId
 order by count(*) desc
 ```
 
+In SQL Server database:
+
 ![Metric Logs](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/MetricLogs.png)
 
+In Excel (opening the .csv text file written by logger):
 
+![Metric Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/Documentation/MetricLogsExcel.png)
