@@ -276,6 +276,8 @@ In Excel (opening the .csv text file written by logger):
 
 ![Metric Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/master/MetricLogsExcel.png)
 
+The metric log is intended to collect data to be analyzed using SQL "group by" queries with count, sum, or avg functions.
+
 See metrics for a given correlation ID:
 
 ```SQL
@@ -285,5 +287,3 @@ from [Logging].MetricLogsLastDay m
 where m.CorrelationId = 'F4B3F067-CC8C-4329-AAA3-9CF60D646AAE'
 order by m.Id desc
 ```
-
-The metric log is intended to collect data to be analyzed using SQL "group by" queries with count, sum, or avg functions.
