@@ -19,13 +19,13 @@ I was motivated to write my own logging component for the following reasons.
 
 ## Features ##
 
-* Safe for use as a Singleton-scoped instance in multi-threaded, highly-concurrent applications such as websites and services.
-* Targets .NET Standard 2.0 so it may be used in .NET Core or .NET Framework runtimes.
-* Writes tracing, performance, and metric logs.
-* Writes to files (one file each for tracing, performance, and metric) or a database.
-* Writes to both files and a database via the [ConsolidatedLogger](https://github.com/ekmadsen/Logging/blob/master/Logging/ConsolidatedLogger.cs) class.  Why write to both targets?  You could configure the file and database loggers differently or enable one of the loggers to send trace messages to the Console in addition to its target.  Typically, I write only to a database logger.
-* Includes a CorrelationId so you may see related messages across processes (within the same application) and across tracing, performance, and metric logs.
-* Configurable
+* **Safe for use as a Singleton-scoped instance** in multi-threaded, highly-concurrent applications such as websites and services.
+* **Targets .NET Standard 2.0** so it may be used in .NET Core or .NET Framework runtimes.
+* **Writes tracing, performance, and metric logs.**
+* **Writes to files (one file each for tracing, performance, and metric) or a database.**
+* **Writes to both files and a database via the [ConsolidatedLogger](https://github.com/ekmadsen/Logging/blob/master/Logging/ConsolidatedLogger.cs) class.**  Why write to both targets?  You could configure the file and database loggers differently or enable one of the loggers to send trace messages to the Console in addition to its target.  Typically, I write only to a database logger.
+* **Includes a CorrelationId so you may see related messages** across processes (within the same application) and across tracing, performance, and metric logs.
+* **Configurable**
   * AppName and ProcessName.  The ProcessName is meant to indicate the layer in your n-tier application architecture, such as "Website", "Service", or "Data Load".
   * TraceFilename, PerformanceFilename, and MetricFilename
   * TraceLogLevel
