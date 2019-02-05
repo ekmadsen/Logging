@@ -16,6 +16,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{42C05C7D-5E4E-4784-94CD-9D14F6A89425}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sql", "Sql", "{5FA7D517-023C-4456-AB98-019BBEF522F1}"
+	ProjectSection(SolutionItems) = preProject
+		GetPerformaceLogsByCorrelationId.sql = GetPerformaceLogsByCorrelationId.sql
+		GetPerformanceLogs.sql = GetPerformanceLogs.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +39,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5FA7D517-023C-4456-AB98-019BBEF522F1} = {5E4D9A3B-BDCB-422C-B63D-5003CAA34800}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {473AB229-1145-41DE-939C-E4A13318CBAC}
