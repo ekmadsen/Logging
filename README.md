@@ -173,7 +173,7 @@ where t.LogLevel = 'Critical Error'
 order by t.Id desc
 ```
 
-Once again, I'll promote my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution that enables exception details to flow from a SQL database through a service to a website, displaying a full cross-process stack trace (related by CorrelationId) in the web browser and in the logs.  It's manifestly clear from this stack trace that failure to check the uniqueness of the new user's email address caused the folowing exception:
+Once again, I'll promote my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution that enables exception details to flow from a SQL database through a service to a website, displaying a full cross-process stack trace (related by CorrelationId) in the web browser and in the logs.  It's manifestly clear from this stack trace that failure to check the uniqueness of the new user's email address caused the following exception:
 ```
 Exception Type =             ErikTheCoder.Logging.SimpleException
 Exception Correlation ID =   9DA80707-DFAA-4C7F-AA59-C4CA813ABE9A
