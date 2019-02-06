@@ -55,7 +55,7 @@ This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/d
 ## Installation ##
 
 * Use SQL Server Management Studio to locate an existing database or create a new database.
-* Run the [CreateDatabase.sql](https://github.com/ekmadsen/Logging/blob/master/CreateDatabase.sql) script to create the tables and views used by this solution.  The script creates SQL objects in a "Logging" schema.  Obviously, if you install this solution in a dedicated database there's no risk of colliding with the names of existing SQL objects.  However, if you install this solution in an existing database the schema minimizes the risk of colliding with existing SQL objects.
+* Run the [CreateDatabase.sql](https://github.com/ekmadsen/Logging/blob/master/CreateDatabase.sql) script to create the tables, views, and indices used by this solution.  The script creates SQL objects in a "Logging" schema.  Obviously, if you install this solution in a dedicated database there's no risk of colliding with the names of existing SQL objects.  However, if you install this solution in an existing database the schema minimizes the risk of colliding with existing SQL objects.
 * Reference this component in your solution via its [NuGet package](https://www.nuget.org/packages/ErikTheCoder.Logging/).
 
 
