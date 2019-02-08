@@ -61,6 +61,8 @@ This component relies on [BlockingCollection](https://docs.microsoft.com/en-us/d
 
 ## Usage (Writing Logs) ##
 
+### Construction ###
+
 Construct file and database loggers:
 ```C#
 Guid correlationId = Guid.NewGuid(); // Will use in later code samples.
@@ -89,6 +91,8 @@ ILogger databaseLogger = new ConcurrentDatabaseLogger(databaseLoggerSettings);
 ILogger consolidatedLogger = new ConsolidatedLogger(new List<ILogger>{ fileLogger, databaseLogger });
 ```
 
+### Dependency Injection ###
+
 Configure dependency injection in ASP.NET Core:
 ```C#
 Services.AddSingleton(typeof(ILogger), consolidatedLogger);
@@ -100,6 +104,8 @@ public AccountController(IAppSettings AppSettings, ILogger Logger, IAccountServi
    _accountService = AccountService;
 }
 ```
+
+### Trace Logging ### 
 
 Log a message with or without a correlation ID:
 ```C#
@@ -120,6 +126,8 @@ catch(Exception exception)
 }
 ```
 
+### Performance Logging ###
+
 Log performance with or without a correlation ID:
 ```C#
 Stopwatch stopwatch = Stopwatch.StartNew();
@@ -128,6 +136,8 @@ stopwatch.Stop();
 logger.LogPerformance(correlationId, nameof(ExpensiveOperation), stopwatch.Elapsed);
 logger.LogPerformance(nameof(ExpensiveOperation), stopwatch.Elapsed);
 ```
+
+### Metric Logging ###
 
 Log a metric, such as a sales order of a particular product by a particular user, with or without a correlation ID:
 ```C#
@@ -143,6 +153,8 @@ logger.LogMetric(HttpContext.User.Identity.Name, "Orders by User", order.TotalQu
 ## Benefits (Reading Logs)  ##
 
 I'll dispense with my sales order example, since I don't actually have that data.  I used a sales orders example to illustrate what's possible with my logger.  I'll show you instead the data automatically logged by by my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution, which uses this component.
+
+### Finding Trace Logs ###
 
 Find all tracing logs related to a given correlation ID:
 
@@ -172,6 +184,8 @@ from[Logging].TraceLogsLastDay t
 where t.LogLevel = 'Critical Error'
 order by t.Id desc
 ```
+
+### Full Cross-Process Stack Trace ###
 
 Once again, I'll promote my [AspNetCore.Middleware](https://github.com/ekmadsen/AspNetCore.Middleware) solution that enables exception details to flow from a SQL database through a service to a website, displaying a full cross-process stack trace (related by CorrelationId) in the web browser and in the logs.  It's manifestly clear from this stack trace that failure to check the uniqueness of the new user's email address caused the following exception:
 ```
@@ -240,6 +254,8 @@ Exception StackTrace =       at System.Data.SqlClient.SqlConnection.OnError(SqlE
    at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
 ```
 
+### Log Performance of Code ###
+
 See the performance of code:
 ```SQL
 select p.*
@@ -263,6 +279,8 @@ where p.CorrelationId = 'F4B3F067-CC8C-4329-AAA3-9CF60D646AAE'
 order by p.Id desc
 ```
 
+### Count Page Hits ###
+
 See page hits:
 
 ```SQL
@@ -282,6 +300,8 @@ In Excel (opening the .csv text file written by logger):
 ![Metric Logs Excel](https://raw.githubusercontent.com/ekmadsen/Logging/master/MetricLogsExcel.png)
 
 The metric log is intended to collect data to be analyzed using SQL "group by" queries with count, sum, or avg functions.
+
+### Other Metrics ###
 
 See metrics for a given correlation ID:
 
