@@ -7,9 +7,9 @@ namespace ErikTheCoder.Logging
 {
     public sealed class ConsolidatedLogger : ILogger
     {
-        private readonly List<ILogger> _traceLoggers;
-        private readonly List<ILogger> _performanceLoggers;
-        private readonly List<ILogger> _metricLoggers;
+        private List<ILogger> _traceLoggers;
+        private List<ILogger> _performanceLoggers;
+        private List<ILogger> _metricLoggers;
         private bool _disposed;
 
 
@@ -41,11 +41,17 @@ namespace ErikTheCoder.Logging
         private void Dispose(bool Disposing)
         {
             if (_disposed) return;
-            if (Disposing) { } // Free managed objects.
             // Free unmanaged objects.
             if (_traceLoggers != null) foreach (ILogger logger in _traceLoggers) logger?.Dispose();
             if (_performanceLoggers != null) foreach (ILogger logger in _performanceLoggers) logger?.Dispose();
             if (_metricLoggers != null) foreach (ILogger logger in _metricLoggers) logger?.Dispose();
+            if (Disposing)
+            {
+                // Free managed objects.
+                _traceLoggers = null;
+                _performanceLoggers = null;
+                _metricLoggers = null;
+            }
             _disposed = true;
         }
 

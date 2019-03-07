@@ -14,14 +14,14 @@ namespace ErikTheCoder.Logging
     public abstract class ConcurrentLoggerBase : ILogger
     {
         private const int _queueIntervalMsec = 100;
-        private readonly LoggerSettings _settings;
-        private readonly string _exeLocation;
-        private readonly string _criticalErrorFilename;
-        private readonly BlockingCollection<TraceLog> _traceQueue;
-        private readonly BlockingCollection<PerformanceLog> _performanceQueue;
-        private readonly BlockingCollection<MetricLog> _metricQueue;
-        private readonly Timer _timer;
-        private readonly List<Task> _tasks;
+        private LoggerSettings _settings;
+        private string _exeLocation;
+        private string _criticalErrorFilename;
+        private BlockingCollection<TraceLog> _traceQueue;
+        private BlockingCollection<PerformanceLog> _performanceQueue;
+        private BlockingCollection<MetricLog> _metricQueue;
+        private List<Task> _tasks;
+        private Timer _timer;
         private bool _disposed;
 
 
@@ -72,12 +72,23 @@ namespace ErikTheCoder.Logging
         {
             if (_disposed) return;
             while ((_traceQueue?.Count > 0) || (_performanceQueue?.Count > 0) || (_metricQueue?.Count > 0)) Thread.Sleep(_queueIntervalMsec); // Wait for queues to drain.
-            if (Disposing) {} // Free managed objects.
+            if (Disposing)
+            {
+                // Free managed objects.
+                _settings = null;
+                _exeLocation = null;
+                _criticalErrorFilename = null;
+                _tasks = null;
+            }
             // Free unmanaged objects.
             _timer?.Dispose();
+            _timer = null;
             _traceQueue?.Dispose();
+            _traceQueue = null;
             _performanceQueue?.Dispose();
+            _performanceQueue = null;
             _metricQueue?.Dispose();
+            _metricQueue = null;
             _disposed = true;
         }
 

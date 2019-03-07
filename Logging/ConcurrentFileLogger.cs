@@ -9,10 +9,10 @@ namespace ErikTheCoder.Logging
     public class ConcurrentFileLogger : ConcurrentLoggerBase
     {
         private const int _logLevelPadding = 15;
-        private readonly FileLoggerSettings _settings;
-        private readonly StreamWriter _traceWriter;
-        private readonly StreamWriter _performanceWriter;
-        private readonly StreamWriter _metricWriter;
+        private FileLoggerSettings _settings;
+        private StreamWriter _traceWriter;
+        private StreamWriter _performanceWriter;
+        private StreamWriter _metricWriter;
         private bool _disposed;
 
 
@@ -55,11 +55,18 @@ namespace ErikTheCoder.Logging
             if (_disposed) return;
             // Call base class implementation to ensure queues drain.
             base.Dispose(Disposing);
-            if (Disposing) {} // Free managed objects.
+            if (Disposing)
+            {
+                // Free managed objects.
+                _settings = null;
+            }
             // Free unmanaged objects.
             _traceWriter?.Dispose();
+            _traceWriter = null;
             _performanceWriter?.Dispose();
+            _performanceWriter = null;
             _metricWriter?.Dispose();
+            _metricWriter = null;
             _disposed = true;
         }
 
