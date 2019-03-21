@@ -15,7 +15,7 @@
     <PackageTags>logging dotnet-core dotnet-standard</PackageTags>
     <Copyright>2019</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

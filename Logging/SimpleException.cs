@@ -70,7 +70,7 @@ namespace ErikTheCoder.Logging
             {
                 // Include spaces to align text.
                 stringBuilder.AppendLine($"Exception Type =             {exception.Type}");
-                if (exception.CorrelationId != Guid.Empty) stringBuilder.AppendLine($"Exception Correlation ID =   {exception.CorrelationId}");
+                if (exception.CorrelationId != Guid.Empty) stringBuilder.AppendLine($"Exception Correlation ID =   {exception.CorrelationId.ToString().ToUpper()}");
                 if (exception.ApplicationName != null) stringBuilder.AppendLine($"Exception App Name =         {exception.ApplicationName}");
                 if (exception.ProcessName != null) stringBuilder.AppendLine($"Exception Process Name =     {exception.ProcessName}");
                 stringBuilder.AppendLine($"Exception Message =          {exception.Message}");
