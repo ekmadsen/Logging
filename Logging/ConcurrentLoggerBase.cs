@@ -229,10 +229,7 @@ namespace ErikTheCoder.Logging
         protected abstract Task WriteLogAsync(MetricLog Log);
 
 
-        protected virtual Task TraceQueueDrained()
-        {
-            return Task.CompletedTask;
-        }
+        protected virtual Task TraceQueueDrained() => Task.CompletedTask;
 
 
         protected virtual Task PerformanceQueueDrained() => Task.CompletedTask;
