@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Threading.Tasks;
 using Dapper;
 using ErikTheCoder.Logging.Settings;
@@ -25,11 +25,12 @@ namespace ErikTheCoder.Logging
         private const string _sqlInsertMetricLogs = "insert into logging.metriclogs (hostId, processId, timestamp, correlationid, itemid, metricname, datetimevalue, intvalue, textvalue) " +
             "values (@hostId, @processId, @timestamp, @correlationid, @itemid, @metricname, @datetimevalue, @intvalue, @textvalue)";
         private readonly string _connection;
+        private readonly IDatabase _database;
         private readonly int? _hostId;
         private readonly int? _processId;
 
 
-        public ConcurrentDatabaseLogger(DatabaseLoggerSettings Settings) : base(Settings)
+        public ConcurrentDatabaseLogger(DatabaseLoggerSettings Settings, IDatabase Database) : base(Settings)
         {
             if (!string.IsNullOrEmpty(Settings.Connection) && (Settings.Connection.IndexOf("Connection Timeout", StringComparison.CurrentCultureIgnoreCase) < 0))
             {
@@ -37,6 +38,7 @@ namespace ErikTheCoder.Logging
                 _connection = $"{Settings.Connection};Connection Timeout={_connectionTimeoutSec}";
             }
             else _connection = Settings.Connection;
+            _database = Database;
             try
             {
                 _hostId = RegisterHost(Environment.MachineName);
@@ -63,9 +65,8 @@ namespace ErikTheCoder.Logging
         {
             if (_hostId.HasValue && _processId.HasValue && !string.IsNullOrWhiteSpace(Log.Message))
             {
-                using (SqlConnection connection = new SqlConnection(_connection))
+                using (DbConnection connection = await _database.OpenConnectionAsync(_connection))
                 {
-                    await connection.OpenAsync();
                     var queryParameters = new
                     {
                         HostId = _hostId.Value,
@@ -85,9 +86,8 @@ namespace ErikTheCoder.Logging
         {
             if (_hostId.HasValue && _processId.HasValue)
             {
-                using (SqlConnection connection = new SqlConnection(_connection))
+                using (DbConnection connection = await _database.OpenConnectionAsync(_connection))
                 {
-                    await connection.OpenAsync();
                     var queryParameters = new
                     {
                         HostId = _hostId.Value,
@@ -107,9 +107,8 @@ namespace ErikTheCoder.Logging
         {
             if (_hostId.HasValue && _processId.HasValue)
             {
-                using (SqlConnection connection = new SqlConnection(_connection))
+                using (DbConnection connection = await _database.OpenConnectionAsync(_connection))
                 {
-                    await connection.OpenAsync();
                     var queryParameters = new
                     {
                         HostId = _hostId.Value,
@@ -131,9 +130,8 @@ namespace ErikTheCoder.Logging
         // Method is not marked async because it's called from constructor (which can't be marked async).
         private int RegisterHost(string HostName)
         {
-            using (SqlConnection connection = new SqlConnection(_connection))
+            using (DbConnection connection = _database.OpenConnectionAsync(_connection).Result)
             {
-                connection.Open();
                 // Get ID of existing host name or insert a new host name.
                 var queryParameters = new { HostName };
                 int? hostId = (int?)connection.ExecuteScalar(_sqlGetHostId, queryParameters) ?? (int)connection.ExecuteScalar(_sqlInsertHost, queryParameters);
@@ -145,9 +143,8 @@ namespace ErikTheCoder.Logging
         // Method is not marked async because it's called from constructor (which can't be marked async).
         private int RegisterProcess(string AppName, string ProcessName)
         {
-            using (SqlConnection connection = new SqlConnection(_connection))
+            using (DbConnection connection = _database.OpenConnectionAsync(_connection).Result)
             {
-                connection.Open();
                 // Get ID of existing app or insert a new app.
                 var appQueryParameters = new {AppName};
                 int? appId = (int?)connection.ExecuteScalar(_sqlGetAppId, appQueryParameters) ?? (int)connection.ExecuteScalar(_sqlInsertApp, appQueryParameters);

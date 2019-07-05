@@ -23,7 +23,7 @@ namespace ErikTheCoder.Logging.Tests
             databaseLoggerSettings.SendTraceMessagesToConsole = false;
             // Create file, database, and consolidated loggers.
             ILogger fileLogger = new ConcurrentFileLogger(fileLoggerSettings);
-            ILogger databaseLogger = new ConcurrentDatabaseLogger(databaseLoggerSettings);
+            ILogger databaseLogger = new ConcurrentDatabaseLogger(databaseLoggerSettings, new SqlDatabase());
             Logger = new ConsolidatedLogger(new List<ILogger> { fileLogger, databaseLogger });
         }
 
