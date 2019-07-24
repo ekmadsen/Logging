@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using ErikTheCoder.Logging.Settings;
+using ErikTheCoder.Utilities;
 
 
 namespace ErikTheCoder.Logging

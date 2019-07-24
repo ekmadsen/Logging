@@ -1,4 +1,5 @@
 ﻿using System;
+using ErikTheCoder.Utilities;
 
 
 namespace ErikTheCoder.Logging
