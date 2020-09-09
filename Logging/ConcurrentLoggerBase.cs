@@ -32,7 +32,7 @@ namespace ErikTheCoder.Logging
             _exeLocation = Assembly.GetEntryAssembly()?.Location ?? Assembly.GetExecutingAssembly().Location;
             _criticalErrorFilename = Path.Combine(Path.GetDirectoryName(_exeLocation) ?? @"C:\", $"{Path.GetFileNameWithoutExtension(_exeLocation)}.log");
             // Create queues.
-            int queues = 0;
+            var queues = 0;
             if (Settings.TraceLogLevel != LogLevel.None)
             {
                 _traceQueue = new BlockingCollection<TraceLog>(new ConcurrentQueue<TraceLog>());
@@ -119,8 +119,8 @@ namespace ErikTheCoder.Logging
         {
             if (LogLevel <= _settings.TraceLogLevel)
             {
-                string message = _settings.MaxTraceLogSize.HasValue ? Message.Truncate(_settings.MaxTraceLogSize.Value) : Message;
-                TraceLog traceLog = new TraceLog(CorrelationId, message, LogLevel);
+                var message = _settings.MaxTraceLogSize.HasValue ? Message.Truncate(_settings.MaxTraceLogSize.Value) : Message;
+                var traceLog = new TraceLog(CorrelationId, message, LogLevel);
                 FormatMessage(traceLog);
                 _traceQueue?.Add(traceLog);
                 if (SendToConsole) Console.WriteLine(traceLog.Message);
@@ -159,30 +159,30 @@ namespace ErikTheCoder.Logging
             {
                 // Prevent overlap if method execution time exceeds timer interval.
                 _timer.Change(Timeout.Infinite, Timeout.Infinite);
-                bool traceLogWritten = false;
-                bool performanceLogWritten = false;
-                bool metricLogWritten = false;
+                var traceLogWritten = false;
+                var performanceLogWritten = false;
+                var metricLogWritten = false;
                 Task task;
                 while ((_traceQueue?.Count > 0) || (_performanceQueue?.Count > 0) || (_metricQueue?.Count > 0))
                 {
                     // At least one queue has logs.
                     // Drain the queues.
                     _tasks.Clear();
-                    if ((_traceQueue != null) && _traceQueue.TryTake(out TraceLog traceLog))
+                    if ((_traceQueue != null) && _traceQueue.TryTake(out var traceLog))
                     {
                         // Write trace log.
                         task = WriteLogAsync(traceLog);
                         _tasks.Add(task);
                         traceLogWritten = true;
                     }
-                    if ((_performanceQueue != null) && _performanceQueue.TryTake(out PerformanceLog performanceLog))
+                    if ((_performanceQueue != null) && _performanceQueue.TryTake(out var performanceLog))
                     {
                         // Write performance log.
                         task = WriteLogAsync(performanceLog);
                         _tasks.Add(task);
                         performanceLogWritten = true;
                     }
-                    if ((_metricQueue != null) && _metricQueue.TryTake(out MetricLog metricLog))
+                    if ((_metricQueue != null) && _metricQueue.TryTake(out var metricLog))
                     {
                         // Write metric log.
                         task = WriteLogAsync(metricLog);
@@ -246,7 +246,7 @@ namespace ErikTheCoder.Logging
 
         protected void WriteCriticalError(Exception Exception)
         {
-            string errorMessage = $"Error occurred in {_exeLocation}.{Environment.NewLine}{Exception.GetSummary(true, true)}{Environment.NewLine}";
+            var errorMessage = $"Error occurred in {_exeLocation}.{Environment.NewLine}{Exception.GetSummary(true, true)}{Environment.NewLine}";
             try
             {
                 // Attempt to write error to local text file.

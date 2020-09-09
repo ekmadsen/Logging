@@ -42,9 +42,9 @@ namespace ErikTheCoder.Logging
         {
             if (_disposed) return;
             // Free unmanaged objects.
-            if (_traceLoggers != null) foreach (ILogger logger in _traceLoggers) logger?.Dispose();
-            if (_performanceLoggers != null) foreach (ILogger logger in _performanceLoggers) logger?.Dispose();
-            if (_metricLoggers != null) foreach (ILogger logger in _metricLoggers) logger?.Dispose();
+            if (_traceLoggers != null) foreach (var logger in _traceLoggers) logger?.Dispose();
+            if (_performanceLoggers != null) foreach (var logger in _performanceLoggers) logger?.Dispose();
+            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger?.Dispose();
             if (Disposing)
             {
                 // Free managed objects.
@@ -62,19 +62,19 @@ namespace ErikTheCoder.Logging
 
         public void Log(LogLevel LogLevel) 
         {
-            if (_traceLoggers != null) foreach (ILogger logger in _traceLoggers) logger?.Log(LogLevel);
+            if (_traceLoggers != null) foreach (var logger in _traceLoggers) logger?.Log(LogLevel);
         }
 
 
         public void Log(string Message, LogLevel LogLevel)
         {
-            if (_traceLoggers != null) foreach (ILogger logger in _traceLoggers) logger?.Log(Message, LogLevel);
+            if (_traceLoggers != null) foreach (var logger in _traceLoggers) logger?.Log(Message, LogLevel);
         }
 
 
         public void Log(Guid CorrelationId, string Message, LogLevel LogLevel)
         {
-            if (_traceLoggers != null) foreach (ILogger logger in _traceLoggers) logger?.Log(CorrelationId, Message, LogLevel);
+            if (_traceLoggers != null) foreach (var logger in _traceLoggers) logger?.Log(CorrelationId, Message, LogLevel);
         }
 
 
@@ -83,7 +83,7 @@ namespace ErikTheCoder.Logging
 
         public void Log(SimpleException Exception, LogLevel LogLevel)
         {
-            if (_traceLoggers != null) foreach (ILogger logger in _traceLoggers) logger?.Log(Exception, LogLevel);
+            if (_traceLoggers != null) foreach (var logger in _traceLoggers) logger?.Log(Exception, LogLevel);
         }
 
 
@@ -92,49 +92,49 @@ namespace ErikTheCoder.Logging
 
         public void Log(Guid CorrelationId, SimpleException Exception, LogLevel LogLevel)
         {
-            if (_traceLoggers != null) foreach (ILogger logger in _traceLoggers) logger?.Log(CorrelationId, Exception, LogLevel);
+            if (_traceLoggers != null) foreach (var logger in _traceLoggers) logger?.Log(CorrelationId, Exception, LogLevel);
         }
 
 
         public void LogPerformance(Guid CorrelationId, string OperationName, TimeSpan OperationDuration)
         {
-            if (_performanceLoggers != null) foreach (ILogger logger in _performanceLoggers) logger.LogPerformance(CorrelationId, OperationName, OperationDuration);
+            if (_performanceLoggers != null) foreach (var logger in _performanceLoggers) logger.LogPerformance(CorrelationId, OperationName, OperationDuration);
         }
 
 
         public void LogMetric(string ItemId, string MetricName, DateTime MetricValue)
         {
-            if (_metricLoggers != null) foreach (ILogger logger in _metricLoggers) logger.LogMetric(ItemId, MetricName, MetricValue);
+            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger.LogMetric(ItemId, MetricName, MetricValue);
         }
 
 
         public void LogMetric(Guid CorrelationId, string ItemId, string MetricName, DateTime MetricValue)
         {
-            if (_metricLoggers != null) foreach (ILogger logger in _metricLoggers) logger.LogMetric(CorrelationId, ItemId, MetricName, MetricValue);
+            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger.LogMetric(CorrelationId, ItemId, MetricName, MetricValue);
         }
 
 
         public void LogMetric(string ItemId, string MetricName, int MetricValue)
         {
-            if (_metricLoggers != null) foreach (ILogger logger in _metricLoggers) logger.LogMetric(ItemId, MetricName, MetricValue);
+            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger.LogMetric(ItemId, MetricName, MetricValue);
         }
 
 
         public void LogMetric(Guid CorrelationId, string ItemId, string MetricName, int MetricValue)
         {
-            if (_metricLoggers != null) foreach (ILogger logger in _metricLoggers) logger.LogMetric(CorrelationId, ItemId, MetricName, MetricValue);
+            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger.LogMetric(CorrelationId, ItemId, MetricName, MetricValue);
         }
 
 
         public void LogMetric(string ItemId, string MetricName, string MetricValue)
         {
-            if (_metricLoggers != null) foreach (ILogger logger in _metricLoggers) logger.LogMetric(ItemId, MetricName, MetricValue);
+            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger.LogMetric(ItemId, MetricName, MetricValue);
         }
 
 
         public void LogMetric(Guid CorrelationId, string ItemId, string MetricName, string MetricValue)
         {
-            if (_metricLoggers != null) foreach (ILogger logger in _metricLoggers) logger.LogMetric(CorrelationId, ItemId, MetricName, MetricValue);
+            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger.LogMetric(CorrelationId, ItemId, MetricName, MetricValue);
         }
     }
 }
