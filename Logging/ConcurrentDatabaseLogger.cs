@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Data.Common;
 using System.Threading.Tasks;
 using Dapper;
 using ErikTheCoder.Logging.Settings;
+using ErikTheCoder.Utilities;
 using JetBrains.Annotations;
 
 
@@ -32,7 +32,7 @@ namespace ErikTheCoder.Logging
 
         public ConcurrentDatabaseLogger(DatabaseLoggerSettings Settings, IDatabase Database) : base(Settings)
         {
-            if (!string.IsNullOrEmpty(Settings.Connection) && (Settings.Connection.IndexOf("Connection Timeout", StringComparison.CurrentCultureIgnoreCase) < 0))
+            if (!Settings.Connection.IsNullOrEmpty() && (Settings.Connection.IndexOf("Connection Timeout", StringComparison.CurrentCultureIgnoreCase) < 0))
             {
                 // Append timeout to connection string.
                 _connection = $"{Settings.Connection};Connection Timeout={_connectionTimeoutSec}";
@@ -45,7 +45,7 @@ namespace ErikTheCoder.Logging
             }
             catch (Exception exception)
             {
-                Exception newException = new Exception("Failed to register logging host.  Logging disabled.", exception);
+                var newException = new Exception("Failed to register logging host.  Logging disabled.", exception);
                 WriteCriticalError(newException);
                 return;
             }
@@ -55,7 +55,7 @@ namespace ErikTheCoder.Logging
             }
             catch (Exception exception)
             {
-                Exception newException = new Exception("Failed to register logging process.  Logging disabled.", exception);
+                var newException = new Exception("Failed to register logging process.  Logging disabled.", exception);
                 WriteCriticalError(newException);
             }
         }
@@ -63,9 +63,9 @@ namespace ErikTheCoder.Logging
 
         protected override async Task WriteLogAsync(TraceLog Log)
         {
-            if (_hostId.HasValue && _processId.HasValue && !string.IsNullOrWhiteSpace(Log.Message))
+            if (_hostId.HasValue && _processId.HasValue && !Log.Message.IsNullOrWhiteSpace())
             {
-                using (DbConnection connection = await _database.OpenConnectionAsync(_connection))
+                using (var connection = await _database.OpenConnectionAsync(_connection))
                 {
                     var queryParameters = new
                     {
@@ -86,7 +86,7 @@ namespace ErikTheCoder.Logging
         {
             if (_hostId.HasValue && _processId.HasValue)
             {
-                using (DbConnection connection = await _database.OpenConnectionAsync(_connection))
+                using (var connection = await _database.OpenConnectionAsync(_connection))
                 {
                     var queryParameters = new
                     {
@@ -107,7 +107,7 @@ namespace ErikTheCoder.Logging
         {
             if (_hostId.HasValue && _processId.HasValue)
             {
-                using (DbConnection connection = await _database.OpenConnectionAsync(_connection))
+                using (var connection = await _database.OpenConnectionAsync(_connection))
                 {
                     var queryParameters = new
                     {
@@ -130,7 +130,7 @@ namespace ErikTheCoder.Logging
         // Method is not marked async because it's called from constructor (which can't be marked async).
         private int RegisterHost(string HostName)
         {
-            using (DbConnection connection = _database.OpenConnectionAsync(_connection).Result)
+            using (var connection = _database.OpenConnectionAsync(_connection).Result)
             {
                 // Get ID of existing host name or insert a new host name.
                 var queryParameters = new { HostName };
@@ -143,7 +143,7 @@ namespace ErikTheCoder.Logging
         // Method is not marked async because it's called from constructor (which can't be marked async).
         private int RegisterProcess(string AppName, string ProcessName)
         {
-            using (DbConnection connection = _database.OpenConnectionAsync(_connection).Result)
+            using (var connection = _database.OpenConnectionAsync(_connection).Result)
             {
                 // Get ID of existing app or insert a new app.
                 var appQueryParameters = new {AppName};

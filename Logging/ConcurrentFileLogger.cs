@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using ErikTheCoder.Logging.Settings;
+using ErikTheCoder.Utilities;
 
 
 namespace ErikTheCoder.Logging
@@ -20,30 +21,30 @@ namespace ErikTheCoder.Logging
         {
             _settings = Settings;
             // Open log writers.
-            if (!string.IsNullOrWhiteSpace(Settings.TraceFilename))
+            if (!Settings.TraceFilename.IsNullOrWhiteSpace())
             {
                 if (!File.Exists(Settings.TraceFilename)) File.AppendAllText(Settings.TraceFilename, null);
-                FileStream traceStream = File.Open(Settings.TraceFilename, FileMode.Append, FileAccess.Write, FileShare.Read);
+                var traceStream = File.Open(Settings.TraceFilename, FileMode.Append, FileAccess.Write, FileShare.Read);
                 _traceWriter = new StreamWriter(traceStream) { AutoFlush = false }; // AutoFlush degrades performance.
             }
-            if (!string.IsNullOrWhiteSpace(Settings.PerformanceFilename))
+            if (!Settings.PerformanceFilename.IsNullOrWhiteSpace())
             {
                 if (!File.Exists(Settings.PerformanceFilename))
                 {
                     // Create performance CSV file with header.
                     File.AppendAllText(Settings.PerformanceFilename, $"\"Timestamp\",\"Correlation ID\",\"Operation Name\",\"Operation Duration (sec)\"{Environment.NewLine}");
                 }
-                FileStream performanceStream = File.Open(Settings.PerformanceFilename, FileMode.Append, FileAccess.Write, FileShare.Read);
+                var performanceStream = File.Open(Settings.PerformanceFilename, FileMode.Append, FileAccess.Write, FileShare.Read);
                 _performanceWriter = new StreamWriter(performanceStream) { AutoFlush = false }; // AutoFlush degrades performance.
             }
-            if (!string.IsNullOrWhiteSpace(Settings.MetricFilename))
+            if (!Settings.MetricFilename.IsNullOrWhiteSpace())
             {
                 if (!File.Exists(Settings.MetricFilename))
                 {
                     // Create metric CSV file with header.
                     File.AppendAllText(Settings.MetricFilename, $"\"Timestamp\",\"Correlation ID\",\"Item ID\",\"Metric Name\",\"DateTime Value\",\"Int Value\",\"Text Value\"{Environment.NewLine}");
                 }
-                FileStream metricStream = File.Open(Settings.MetricFilename, FileMode.Append, FileAccess.Write, FileShare.Read); // AutoFlush degrades performance.
+                var metricStream = File.Open(Settings.MetricFilename, FileMode.Append, FileAccess.Write, FileShare.Read); // AutoFlush degrades performance.
                 _metricWriter = new StreamWriter(metricStream) { AutoFlush = false }; // AutoFlush degrades performance.
             }
         }

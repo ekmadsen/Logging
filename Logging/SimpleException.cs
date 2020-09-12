@@ -41,8 +41,8 @@ namespace ErikTheCoder.Logging
         public SimpleException(Exception Exception, Guid CorrelationId, string ApplicationName, string ProcessName)
         {
             // Recursively copy exception details from .NET Exception object to this object.
-            Exception exception = Exception;
-            SimpleException simpleException = this;
+            var exception = Exception;
+            var simpleException = this;
             while (exception != null)
             {
                 simpleException.Type = exception.GetType().FullName;
@@ -64,8 +64,8 @@ namespace ErikTheCoder.Logging
 
         public string GetSummary(bool IncludeStackTrace = false, bool RecurseInnerExceptions = false)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            SimpleException exception = this;
+            var stringBuilder = new StringBuilder();
+            var exception = this;
             while (exception != null)
             {
                 // Include spaces to align text.

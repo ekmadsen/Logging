@@ -12,7 +12,7 @@ namespace ErikTheCoder.Logging.Tests
         [Test]
         public async Task Log()
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
+            var stopwatch = Stopwatch.StartNew();
             await Task.Delay(TimeSpan.FromSeconds(1));
             stopwatch.Stop();
             ApplicationResources.Logger.LogPerformance(Guid.NewGuid(), nameof(Log), stopwatch.Elapsed);

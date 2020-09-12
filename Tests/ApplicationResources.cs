@@ -18,8 +18,8 @@ namespace ErikTheCoder.Logging.Tests
         public static void SetUp()
         {
             // Get configuration.
-            FileLoggerSettings fileLoggerSettings = ParseFileLoggerConfiguration();
-            DatabaseLoggerSettings databaseLoggerSettings = ParseDatabaseLoggerConfiguration();
+            var fileLoggerSettings = ParseFileLoggerConfiguration();
+            var databaseLoggerSettings = ParseDatabaseLoggerConfiguration();
             databaseLoggerSettings.SendTraceMessagesToConsole = false;
             // Create file, database, and consolidated loggers.
             ILogger fileLogger = new ConcurrentFileLogger(fileLoggerSettings);
@@ -45,8 +45,8 @@ namespace ErikTheCoder.Logging.Tests
 
         private static JObject ParseConfigurationFile()
         {
-            string directory = Path.GetDirectoryName(typeof(ApplicationResources).Assembly.Location) ?? string.Empty;
-            string configurationFile = Path.Combine(directory, "appsettings.json");
+            var directory = Path.GetDirectoryName(typeof(ApplicationResources).Assembly.Location) ?? string.Empty;
+            var configurationFile = Path.Combine(directory, "appSettings.json");
             if (File.Exists(configurationFile))
             {
                 return JObject.Parse(File.ReadAllText(configurationFile));
