@@ -15,7 +15,7 @@
     <PackageTags>logging dotnet-core dotnet-standard</PackageTags>
     <Copyright>2019</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
