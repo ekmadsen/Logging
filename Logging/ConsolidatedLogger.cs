@@ -41,10 +41,6 @@ namespace ErikTheCoder.Logging
         private void Dispose(bool Disposing)
         {
             if (_disposed) return;
-            // Free unmanaged objects.
-            if (_traceLoggers != null) foreach (var logger in _traceLoggers) logger?.Dispose();
-            if (_performanceLoggers != null) foreach (var logger in _performanceLoggers) logger?.Dispose();
-            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger?.Dispose();
             if (Disposing)
             {
                 // Free managed objects.
@@ -52,6 +48,10 @@ namespace ErikTheCoder.Logging
                 _performanceLoggers = null;
                 _metricLoggers = null;
             }
+            // Free unmanaged objects.
+            if (_traceLoggers != null) foreach (var logger in _traceLoggers) logger?.Dispose();
+            if (_performanceLoggers != null) foreach (var logger in _performanceLoggers) logger?.Dispose();
+            if (_metricLoggers != null) foreach (var logger in _metricLoggers) logger?.Dispose();
             _disposed = true;
         }
 
